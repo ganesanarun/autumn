@@ -1,0 +1,39 @@
+act:
+  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  method: POST
+  body: {
+    "geoType": "COMUNA",
+    "geoCode": "13114",
+    "itemId": "MKSLAS3G7I-1"
+  }
+asserts:
+  status: 200
+  body:
+    {
+      "isServiceable": true,
+      "itemId": "MKSLAS3G7I-1",
+      "serviceNodeType": "SELLER",
+      "shippingOptions": [
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+        },
+        {
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "NEXT_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+        },
+        {
+          "shippingMethod": "DATE_RANGE",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+        }
+      ]
+    }

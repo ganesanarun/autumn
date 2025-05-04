@@ -1,0 +1,43 @@
+act:
+  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  method: POST
+  body: {
+    "geoType": "COMUNA",
+    "geoCode": "13114",
+    "itemId": "153998999"
+  }
+asserts:
+  status: 200
+  body:
+    {
+      "isServiceable": true,
+      "itemId": "153998999",
+      "networkStockLevel": "IN_STOCK",
+      "serviceNodeType": "RETAIL",
+      "serviceableStockLevel": "IN_STOCK",
+      "shippingOptions": [
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "NEXT_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "IN_STORE",
+          "shippingType": "COLLECT"
+        }
+      ]
+    }

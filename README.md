@@ -25,6 +25,11 @@ The `HttpRequestExecutor` class is responsible for executing HTTP requests. It u
 Spring framework to send HTTP requests and receive responses. The `execute` method takes a `TestCase` object as an
 argument, makes an HTTP request based on the `Act` part of the `TestCase`, and returns a `Response` object.
 
+## Requirements
+
+- Java 21
+- Gradle 8.6
+
 ## Convention-Based Testing
 
 The framework uses a convention-based approach to testing. Test cases are defined in YAML files, following a specific
@@ -96,6 +101,27 @@ org.andino.autumn.AutomationTests
     Test successfully-get-macbook-by-id.yml PASSED
 
 SUCCESS: Executed 2 tests in 1.7s
+```
+
+To run test per environment
+
+```shell
+./gradlew test -Penv=<env>
+```
+
+The framework will look for test cases in the `src/test/resources/<env>` directory, where `<env>` is the
+environment name.
+
+For example, to run tests in the `staging` environment, you would execute:
+
+```shell
+./gradlew test -Penv=staging
+```
+
+to run tests in the `production` environment, you would execute:
+
+```shell
+./gradlew test -Penv=production
 ```
 
 html report will be generated in `build/reports/tests/test/index.html`

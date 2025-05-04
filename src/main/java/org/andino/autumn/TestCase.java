@@ -2,11 +2,12 @@ package org.andino.autumn;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import java.net.URI;
@@ -23,6 +24,7 @@ public class TestCase {
     @Setter
     @Getter
     @NoArgsConstructor
+    @ToString
     public static class Act {
         private String url;
         private HttpMethod method;
@@ -44,5 +46,6 @@ public class TestCase {
     public static class Assert {
         private int status;
         private JsonNode body;
+        private HttpHeaders headers;
     }
 }

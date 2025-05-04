@@ -1,0 +1,46 @@
+name: Run Smoke Tests
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to run tests against'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  build:
+    runs-on:
+      group: gh-runners-self-hosted
+    permissions:
+      deployments: write
+      id-token: write
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.10"
+
+      - name: Build with Gradle
+        run: gradle build -Penv=${{ github.event.inputs.env }}
+
+      - name: Upload Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          path: '${{ github.workspace }}/**/build/reports'
+          name: reports

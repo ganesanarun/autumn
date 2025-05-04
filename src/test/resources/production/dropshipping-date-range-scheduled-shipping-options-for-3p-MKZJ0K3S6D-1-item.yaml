@@ -1,0 +1,30 @@
+act:
+  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  method: POST
+  body: {
+    "geoType": "COMUNA",
+    "geoCode": "13114",
+    "itemId": "MKZJ0K3S6D-1"
+  }
+asserts:
+  status: 200
+  body:
+    {
+      "isServiceable": true,
+      "itemId": "MKZJ0K3S6D-1",
+      "serviceNodeType": "SELLER",
+      "shippingOptions": [
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
+        },
+        {
+          "shippingMethod": "DATE_RANGE",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+        }
+      ]
+    }
