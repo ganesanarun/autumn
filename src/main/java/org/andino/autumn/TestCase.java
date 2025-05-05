@@ -15,6 +15,7 @@ import org.assertj.core.api.AbstractIntegerAssert;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.util.StringUtils;
 
 import java.net.URI;
 import java.util.List;
@@ -28,6 +29,8 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 public class TestCase {
     private Act act;
     private Assert asserts;
+    private boolean disabled;
+    private String disabledReason;
 
     @AllArgsConstructor
     @Setter
@@ -89,5 +92,9 @@ public class TestCase {
 
     public AbstractIntegerAssert<?> assertThis(HttpStatusCode actual) {
         return org.assertj.core.api.Assertions.assertThat(actual.value()).isEqualTo(asserts.getStatus());
+    }
+
+    public String getDisabledReason() {
+        return StringUtils.hasText(disabledReason) ? disabledReason : "Test is disabled in YAML configuration";
     }
 }
