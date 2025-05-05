@@ -1,8 +1,6 @@
 package org.andino.autumn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.andino.autumn.matchers.AnyUUIDMatcher;
-import org.andino.autumn.matchers.AnyZonedDateTimeMatcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -17,11 +15,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_ARRAY_ORDER;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_ARRAY_ITEMS;
-import static net.javacrumbs.jsonunit.core.Option.IGNORING_EXTRA_FIELDS;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 
@@ -53,14 +46,8 @@ public class AutomationTests {
 
             Response response = httpRequestExecutor.execute(testCase);
 
-            assertThat(response.getStatus().value()).isEqualTo(testCase.getAsserts().getStatus());
-            if (testCase.getAsserts().getBody() != null) {
-                assertThatJson(response.getResponseBody())
-                        .withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher())
-                        .withMatcher("any-uuid", new AnyUUIDMatcher())
-                        .when(IGNORING_EXTRA_FIELDS, IGNORING_ARRAY_ORDER, IGNORING_EXTRA_ARRAY_ITEMS)
-                        .isEqualTo(testCase.getAsserts().getBody());
-            }
+            testCase.assertThis(response.getStatus());
+            testCase.assertThis(response.getResponseBody());
         })).toList();
     }
 

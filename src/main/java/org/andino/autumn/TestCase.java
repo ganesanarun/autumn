@@ -7,10 +7,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import net.javacrumbs.jsonunit.assertj.JsonAssert;
+import net.javacrumbs.jsonunit.core.Option;
+import org.andino.autumn.matchers.AnyUUIDMatcher;
+import org.andino.autumn.matchers.AnyZonedDateTimeMatcher;
+import org.assertj.core.api.AbstractIntegerAssert;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 
 import java.net.URI;
+import java.util.List;
+
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -47,5 +56,38 @@ public class TestCase {
         private int status;
         private JsonNode body;
         private HttpHeaders headers;
+        private Customization customization;
+
+        public JsonAssert assertBody(JsonNode actual) {
+            if (customization == null || customization.getBody() == null || customization.getBody().getOptions().isEmpty()) {
+                return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher()).withMatcher("any-uuid", new AnyUUIDMatcher()).isEqualTo(body);
+            }
+
+            return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher()).withMatcher("any-uuid", new AnyUUIDMatcher()).when(customization.getBody().getOptions().getFirst(), customization.getBody().getOptions().toArray(Option[]::new)).isEqualTo(body);
+        }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Customization {
+        private Body body;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class Body {
+        private List<Option> options;
+    }
+
+    public JsonAssert assertThis(JsonNode actual) {
+        return asserts.assertBody(actual);
+    }
+
+    public AbstractIntegerAssert<?> assertThis(HttpStatusCode actual) {
+        return org.assertj.core.api.Assertions.assertThat(actual.value()).isEqualTo(asserts.getStatus());
     }
 }

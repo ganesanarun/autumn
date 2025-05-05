@@ -8,6 +8,12 @@ act:
   }
 asserts:
   status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_ARRAY_ORDER
+        - IGNORING_EXTRA_ARRAY_ITEMS
   body:
     {
       "isServiceable": true,
