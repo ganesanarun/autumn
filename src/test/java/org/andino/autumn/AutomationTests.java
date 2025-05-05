@@ -12,25 +12,25 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
 
 public class AutomationTests {
 
     private final HttpRequestExecutor httpRequestExecutor = new HttpRequestExecutor(RestClient.create(), new ObjectMapper());
     private final YamlReader yamlReader = new YamlReader();
     private static final Logger LOGGER = LoggerFactory.getLogger(AutomationTests.class);
-    private static String resourcePattern = "classpath*:*.y*ml";
+    private static String resourcePattern = "classpath*:**/*.y*ml";
 
     @BeforeAll
     public static void setup() {
         String env = System.getProperty("env", "");
         LOGGER.info("Using environment: {}", env);
         if (!env.isEmpty()) {
-            resourcePattern = "classpath*:" + env + "/*.y*ml";
+            resourcePattern = "classpath*:" + env + "/**/*.y*ml";
         }
         LOGGER.info("Loading resource pattern: {}", resourcePattern);
     }
@@ -40,8 +40,8 @@ public class AutomationTests {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources(resourcePattern);
 
-        return Stream.of(resources).parallel().map(resource -> dynamicTest(resource.getFilename(), () -> {
-            var fileName = getFileName(resource.getFilename());
+        return Stream.of(resources).parallel().map(resource -> dynamicTest(getFileName(resource), () -> {
+            var fileName = getFileName(resource.getURI());
             TestCase testCase = yamlReader.readYamlFile(fileName);
 
             Response response = httpRequestExecutor.execute(testCase);
@@ -51,9 +51,17 @@ public class AutomationTests {
         })).toList();
     }
 
-    private String getFileName(String filename) {
-        String env = System.getProperty("env", "");
-        return !env.isEmpty() ? String.format("%s/%s", env, filename) : filename;
+    private String getFileName(URI uri) {
+        return uri.toString().substring(uri.toString().lastIndexOf("/resources/test/") + 16);
+    }
+
+
+    private String getFileName(Resource resource) {
+        try {
+            return getFileName(resource.getURI());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to get file name from resource", e);
+        }
     }
 
 }
