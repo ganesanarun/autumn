@@ -1,9 +1,12 @@
-package org.andino.autumn;
+package org.andino.autumn.executors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.andino.autumn.Act;
+import org.andino.autumn.Response;
+import org.andino.autumn.TestCase;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -21,7 +24,7 @@ public class HttpRequestExecutor {
         return invoke(testCase.getAct(), httpHeaders);
     }
 
-    private Response invoke(TestCase.Act request, MultiValueMap<String, String> headers) {
+    private Response invoke(Act request, MultiValueMap<String, String> headers) {
         final var response = restClient.method(request.getMethod()).uri(request.getUri()).body(request.getBody()).retrieve().toEntity(JsonNode.class);
         return new Response(response.getStatusCode(), response.getBody(), response.getHeaders());
     }

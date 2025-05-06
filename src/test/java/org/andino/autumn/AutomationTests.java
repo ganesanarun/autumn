@@ -2,6 +2,7 @@ package org.andino.autumn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Allure;
+import org.andino.autumn.executors.HttpRequestExecutor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -13,11 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.web.client.RestClient;
 
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,7 +28,6 @@ class AutomationTests {
     private static final HttpRequestExecutor httpRequestExecutor = new HttpRequestExecutor(RestClient.create(), new ObjectMapper());
     private static final YamlReader yamlReader = new YamlReader();
     private static final Logger LOGGER = LoggerFactory.getLogger(AutomationTests.class);
-    private static final String TEST_RESOURCE_PATH = "/resources/test/";
     private static String resourcePattern = "classpath*:**/*.y*ml";
 
     @BeforeAll
@@ -55,18 +51,12 @@ class AutomationTests {
     }
 
     private Map<String, List<DynamicTest>> leafTestsByFolder(Resource[] resources) {
-        return Arrays.stream(resources).map(this::createTestInfo).collect(Collectors.groupingBy(TestInfo::folderPath, Collectors.mapping(this::testFrom, Collectors.toList())));
-    }
-
-    private TestInfo createTestInfo(Resource resource) {
-        String filePath = getResourcePath(resource);
-        String folderPath = getFolderPath(filePath);
-        return new TestInfo(getFileName(filePath), filePath, folderPath);
+        return Arrays.stream(resources).map(FileMeta::from).collect(Collectors.groupingBy(FileMeta::folderPath, Collectors.mapping(this::testFrom, Collectors.toList())));
     }
 
     private Stream<DynamicNode> create(Map<String, List<DynamicTest>> leafTestsByFolder) {
         Node root = buildNodeTree(leafTestsByFolder);
-        return root.children.values().stream().map(this::buildDynamicNode);
+        return root.children().values().stream().map(this::buildDynamicNode);
     }
 
     private Node buildNodeTree(Map<String, List<DynamicTest>> leafTestsByFolder) {
@@ -85,13 +75,12 @@ class AutomationTests {
     }
 
     private DynamicNode buildDynamicNode(Node node) {
-        Stream<DynamicNode> children = Stream.concat(node.tests.stream(), node.children.values().stream().map(this::buildDynamicNode));
-        return dynamicContainer(node.name, children);
+        Stream<DynamicNode> children = Stream.concat(node.tests().stream(), node.children().values().stream().map(this::buildDynamicNode));
+        return dynamicContainer(node.name(), children);
     }
 
-    private DynamicTest testFrom(TestInfo testInfo) {
+    private DynamicTest testFrom(FileMeta testInfo) {
         var testCase = yamlReader.readYamlFile(testInfo.filePath());
-
         return dynamicTest(testInfo.getTestName(), () -> {
             testCase.annotateFor(testInfo);
             if (testCase.isDisabled()) {
@@ -113,41 +102,5 @@ class AutomationTests {
                 Allure.attachment("Response Body", response.getResponseBody().toPrettyString());
             }
         });
-    }
-
-    private String getFolderPath(String filePath) {
-        var path = Paths.get(filePath);
-        var parentPath = path.getParent();
-        return parentPath == null ? "" : parentPath.toString().replace('\\', '/');
-    }
-
-    private String getResourcePath(Resource resource) {
-        try {
-            var path = resource.getURI().toString();
-            var resourcesIndex = path.lastIndexOf(TEST_RESOURCE_PATH);
-            return resourcesIndex == -1 ? resource.getFilename() : path.substring(resourcesIndex + 16);
-        } catch (IOException e) {
-            LOGGER.error("Error getting resource path", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private String getFileName(String filePath) {
-        return Paths.get(filePath).getFileName().toString();
-    }
-
-
-    private record Node(String name, List<DynamicTest> tests, Map<String, Node> children) {
-        public Node(String name) {
-            this(name, new ArrayList<>(), new HashMap<>());
-        }
-
-        public Node getOrCreateChild(String name) {
-            return children.computeIfAbsent(name, Node::new);
-        }
-
-        public void addTests(List<DynamicTest> testsToAdd) {
-            this.tests.addAll(testsToAdd);
-        }
     }
 }
