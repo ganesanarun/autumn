@@ -36,7 +36,7 @@ jobs:
           gradle-version: "8.10"
 
       - name: Build with Gradle
-        run: gradle build -Penv=${{ github.event.inputs.env }}
+        run: gradle build allureReport -Penv=${{ github.event.inputs.env }}
 
       - name: Upload Reports
         if: always()

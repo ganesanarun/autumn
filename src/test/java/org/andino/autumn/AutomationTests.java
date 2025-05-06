@@ -1,6 +1,7 @@
 package org.andino.autumn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.qameta.allure.Allure;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -89,20 +90,28 @@ class AutomationTests {
     }
 
     private DynamicTest testFrom(TestInfo testInfo) {
-        var testCase = yamlReader.readYamlFile(testInfo.filePath);
-
-        if (testCase.isDisabled()) {
-            return dynamicTest(testInfo.getTestName(), () -> {
-                LOGGER.info("Skipping test: {}", testInfo.getTestName());
-                throw new TestAbortedException(testCase.getDisabledReason());
-            });
-        }
+        var testCase = yamlReader.readYamlFile(testInfo.filePath());
 
         return dynamicTest(testInfo.getTestName(), () -> {
+            testCase.annotateFor(testInfo);
+            if (testCase.isDisabled()) {
+                throw new TestAbortedException(testCase.getDisabledReason());
+            }
+
             var response = httpRequestExecutor.execute(testCase);
 
             testCase.assertThis(response.getStatus());
             testCase.assertThis(response.getResponseBody());
+            annotateWith(response);
+        });
+    }
+
+    private void annotateWith(Response response) {
+        Allure.step("Response Details", () -> {
+            Allure.parameter("Status Code", response.getStatus().toString());
+            if (response.getResponseBody() != null) {
+                Allure.attachment("Response Body", response.getResponseBody().toPrettyString());
+            }
         });
     }
 
@@ -127,12 +136,6 @@ class AutomationTests {
         return Paths.get(filePath).getFileName().toString();
     }
 
-    private record TestInfo(String fileName, String filePath, String folderPath) {
-
-        public String getTestName() {
-            return fileName.replace(".yml", "").replace(".yaml", "");
-        }
-    }
 
     private record Node(String name, List<DynamicTest> tests, Map<String, Node> children) {
         public Node(String name) {

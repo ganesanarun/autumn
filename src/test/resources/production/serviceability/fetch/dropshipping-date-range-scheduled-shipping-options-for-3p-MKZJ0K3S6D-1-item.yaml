@@ -30,7 +30,18 @@ asserts:
           "shippingMethod": "DATE_RANGE",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         }
       ]
     }
+meta:
+  epic: Serviceability
+  feature: Fetch API
+  story: Market Place Serviceability
+  severity: critical
+  tags:
+    - 3P
+    - serviceability
+    - fetch
+  description: Fetch serviceability for item MKZJ0K3S6D-1 in comuna 13114
+    and check all shipping options

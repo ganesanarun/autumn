@@ -24,7 +24,7 @@ asserts:
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         },
         {
           "estimatedDelivery": {
@@ -33,13 +33,24 @@ asserts:
           "shippingMethod": "NEXT_DAY",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         },
         {
           "shippingMethod": "DATE_RANGE",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel":["DROPSHIPPING"]
+          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         }
       ]
     }
+meta:
+  epic: Serviceability
+  feature: Fetch API
+  story: Market Place Serviceability
+  severity: critical
+  tags:
+    - 3P
+    - serviceability
+    - fetch
+  description: Fetch serviceability for item MKSLAS3G7I-1 in comuna 13114
+    and check all shipping options
