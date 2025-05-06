@@ -69,3 +69,25 @@ allure {
         singleFile = true
     }
 }
+
+task customizeAllureHtml {
+    dependsOn allureReport
+    doLast {
+        def indexHtml = file("$buildDir/reports/allure-report/allureReport/index.html")
+        if (indexHtml.exists()) {
+            def content = indexHtml.text
+
+            // Replace the title
+            content = content.replace("<title>Allure Report</title>", "<title>GIV Test Report</title>")
+
+            // Write modified content back
+            indexHtml.text = content
+        } else {
+            logger.warn("Could not find index.html at ${indexHtml.absolutePath}")
+        }
+    }
+}
+
+tasks.named('allureReport').configure {
+    finalizedBy customizeAllureHtml
+}

@@ -11,6 +11,8 @@ on:
           - production
           - staging
 
+permissions: write-all
+
 jobs:
   build:
     runs-on:
@@ -44,3 +46,22 @@ jobs:
         with:
           path: '${{ github.workspace }}/**/build/reports'
           name: reports
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Update index.html
+        run: |
+          # Copy the new index.html file to gh-pages directory
+          cp "${{ github.workspace }}/build/reports/allure-report/allureReport/index.html" gh-pages/
+          
+          # Commit and push changes
+          cd gh-pages
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add index.html
+          git commit -m "Update Allure report" || echo "No changes to commit"
+          git push origin gh-pages
