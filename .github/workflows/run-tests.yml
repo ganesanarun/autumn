@@ -8,12 +8,13 @@ on:
     inputs:
       env:
         description: 'Environment to run tests against'
-        required: true
-        default: 'production'
+        required: false
+        default: ''
         type: choice
         options:
           - production
           - staging
+          - ''
 
 permissions: write-all
 
