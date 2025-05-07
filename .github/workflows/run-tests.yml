@@ -1,9 +1,9 @@
 name: Run Smoke Tests
 on:
   schedule:
-    - cron: '0 0 * * *' # Every day at midnight
-    - cron: '0 11 * * *' # Every day at 8 AM Chile time
-    - cron: '40 2 * * *' # Every day at 2:10 AM IST
+    - cron: '0 0 * * *'
+    - cron: '0 11 * * *'
+    - cron: '40 2 * * *'
   workflow_dispatch:
     inputs:
       env:
@@ -13,18 +13,40 @@ on:
         options:
           - production
           - staging
+  repository_dispatch:
+    types: [run_production_tests, run_staging_tests]
 
 permissions: write-all
 
 jobs:
-  build:
+  determine-environments:
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{ steps.set-environments.outputs.environments }}
+    steps:
+      - id: set-environments
+        run: |
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "environments=['production', 'staging']" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "environments=['${{ github.event.inputs.env }}']" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            if [[ "${{ github.event.action }}" == "run_production_tests" ]]; then
+              echo "environments=['production']" >> $GITHUB_OUTPUT
+            elif [[ "${{ github.event.action }}" == "run_staging_tests" ]]; then
+              echo "environments=['staging']" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+  run-tests:
+    needs: determine-environments
     runs-on:
       group: gh-runners-self-hosted
-    permissions:
-      deployments: write
-      id-token: write
-      contents: write
-      packages: write
+    strategy:
+      matrix:
+        env: ${{ fromJson(needs.determine-environments.outputs.environments) }}
+      fail-fast: false
+      max-parallel: 1
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -41,14 +63,14 @@ jobs:
           gradle-version: "8.10"
 
       - name: Build with Gradle
-        run: gradle build allureReport -Penv=${{ github.event.inputs.env }}
+        run: gradle test allureReport -Penv=${{ matrix.env }}
 
       - name: Upload Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           path: '${{ github.workspace }}/**/build/reports'
-          name: reports
+          name: reports-${{ matrix.env }}
 
       - name: Checkout gh-pages branch
         uses: actions/checkout@v4
@@ -56,17 +78,18 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Update index.html
+      - name: Update environment report
         run: |
-          # Copy the new index.html file to gh-pages directory
-          ENV="${{ github.event.inputs.env || 'production' }}"
-          mkdir -p "gh-pages/$ENV"
-          cp "${{ github.workspace }}/build/reports/allure-report/allureReport/index.html" "gh-pages/$ENV/"
+          # Create directory for environment if it doesn't exist
+          mkdir -p "gh-pages/${{ matrix.env }}"
+          
+          # Copy the entire Allure report to the environment directory
+          cp -r "${{ github.workspace }}/build/reports/allure-report/allureReport/"* "gh-pages/${{ matrix.env }}/"
           
           # Commit and push changes
           cd gh-pages
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add "$ENV/index.html"
-          git commit -m "Update $ENV Allure report" || echo "No changes to commit"
+          git add "${{ matrix.env }}"
+          git commit -m "Update ${{ matrix.env }} Allure report" || echo "No changes to commit"
           git push origin gh-pages
