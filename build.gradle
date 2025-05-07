@@ -82,6 +82,66 @@ task customizeAllureHtml {
             content = content.replace("<title>Allure Report</title>", "<title>GIV Test Report</title>")
 
             // Write modified content back
+
+            def scriptContent = '''
+            <script>
+                (function() {
+                    // Initial replacement function
+                    function replaceAllureWithGiv() {
+                        // Walk through all text nodes in the document
+                        const walker = document.createTreeWalker(
+                            document.body, 
+                            NodeFilter.SHOW_TEXT, 
+                            null, 
+                            false
+                        );
+                        
+                        let node;
+                        while (node = walker.nextNode()) {
+                            if (node.nodeValue && node.nodeValue.includes('Allure')) {
+                                node.nodeValue = node.nodeValue.replace(/Allure/g, 'GIV');
+                            }
+                        }
+                    }
+            
+                    // Setup mutation observer to detect DOM changes
+                    const observer = new MutationObserver(function(mutations) {
+                        replaceAllureWithGiv();
+                    });
+                    
+                    // Configuration for the observer
+                    const config = { 
+                        childList: true,     // observe direct children
+                        subtree: true,       // and lower descendants too
+                        characterData: true, // observe text changes
+                        attributes: true     // observe attribute changes
+                    };
+                    
+                    // Initial run on page load
+                    window.addEventListener('DOMContentLoaded', function() {
+                        replaceAllureWithGiv();
+                        
+                        // Start observing the document body for changes
+                        observer.observe(document.body, config);
+                        
+                        // Additional event listeners for SPA navigation
+                        // Many SPAs use popstate for navigation
+                        window.addEventListener('popstate', function() {
+                            setTimeout(replaceAllureWithGiv, 100);
+                        });
+                        
+                        // Add listeners for clicks that might trigger navigation
+                        document.body.addEventListener('click', function() {
+                            setTimeout(replaceAllureWithGiv, 100);
+                        });
+                        
+                        // Check periodically in case we miss some updates
+                        setInterval(replaceAllureWithGiv, 1000);
+                    });
+                })();
+            </script>
+            '''
+            content = content.replace("</head>", scriptContent + "\n</head>")
             indexHtml.text = content
         } else {
             logger.warn("Could not find index.html at ${indexHtml.absolutePath}")
