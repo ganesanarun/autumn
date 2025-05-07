@@ -20,7 +20,7 @@ permissions: write-all
 
 jobs:
   determine-environments:
-    runs-on: ubuntu-latest
+    runs-on: gh-runners-self-hosted
     outputs:
       environments: ${{ steps.set-environments.outputs.environments }}
     steps:
