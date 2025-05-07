@@ -1,3 +1,5 @@
+import groovy.json.JsonBuilder
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.0-SNAPSHOT'
@@ -41,6 +43,7 @@ tasks.named('test') {
     useJUnitPlatform()
     systemProperties project.properties.subMap(["env"])
     ignoreFailures true
+    finalizedBy 'generateTestSummary'
 }
 
 
@@ -71,7 +74,7 @@ allure {
     }
 }
 
-task customizeAllureHtml {
+tasks.register('customizeAllureHtml') {
     dependsOn allureReport
     doLast {
         def indexHtml = file("$buildDir/reports/allure-report/allureReport/index.html")
@@ -151,4 +154,46 @@ task customizeAllureHtml {
 
 tasks.named('allureReport').configure {
     finalizedBy customizeAllureHtml
+}
+
+tasks.create('generateTestSummary') {
+    doLast {
+        def testReportDir = file("$buildDir/test-results/test")
+        def totalTests = 0
+        def failedTests = 0
+        def skippedTests = 0
+
+        if (testReportDir.exists()) {
+            def testSuits = testReportDir.listFiles().findAll { it.name.endsWith('.xml') }
+
+            testSuits.each {
+                def suite = new XmlParser().parse(it)
+
+                def tests = suite.@tests[0] as Integer ?: 0
+                def failures = suite.@failures[0] as Integer ?: 0
+                def errors = suite.@errors[0] as Integer ?: 0
+                def skipped = suite.@skipped[0] as Integer ?: 0
+
+                totalTests += tests
+                skippedTests += skipped
+                failedTests += (failures + errors)
+            }
+
+            def passedTests = totalTests - failedTests - skippedTests
+            def testResult = (failedTests > 0) ? "failure" : (totalTests == 0) ? "unknown" : "success"
+
+            def summary = [
+                    total  : totalTests,
+                    passed : passedTests,
+                    failed : failedTests,
+                    skipped: skippedTests,
+                    result : testResult,
+            ]
+            def jsonBuilder = new JsonBuilder(summary)
+            file("${buildDir}/test-results/summary.json").text = jsonBuilder.toPrettyString()
+        } else {
+            logger.warn("Test report directory does not exist: ${testReportDir.absolutePath}")
+        }
+
+    }
 }

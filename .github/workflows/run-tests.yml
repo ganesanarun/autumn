@@ -1,4 +1,4 @@
-name: Run Smoke Tests
+name: Run Functional Tests
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -14,13 +14,14 @@ on:
           - production
           - staging
   repository_dispatch:
-    types: [run_production_tests, run_staging_tests]
+    types: [ run_production_tests, run_staging_tests ]
 
 permissions: write-all
 
 jobs:
   determine-environments:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: gh-runners-self-hosted
     outputs:
       environments: ${{ steps.set-environments.outputs.environments }}
     steps:
@@ -56,14 +57,53 @@ jobs:
           distribution: 'temurin'
           server-id: github
           settings-path: ${{ github.workspace }}
-
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "8.10"
-
       - name: Build with Gradle
         run: gradle test allureReport -Penv=${{ matrix.env }}
+      - name: Read Test Summary
+        if: always()
+        id: test_summary
+        run: |
+          SUMMARY_FILE="${{ github.workspace }}/build/test-results/summary.json"
+          if [ -f "$SUMMARY_FILE" ]; then
+            echo "Test summary file found: $SUMMARY_FILE\n"
+            cat "$SUMMARY_FILE"
+            TOTAL=$(jq '.total' "$SUMMARY_FILE")
+            PASSED=$(jq '.passed' "$SUMMARY_FILE")
+            FAILED=$(jq '.failed' "$SUMMARY_FILE")
+            SKIPPED=$(jq '.skipped' "$SUMMARY_FILE")
+            TEST_RESULT=$(jq -r '.result' "$SUMMARY_FILE")
+            echo "Total Tests: $TOTAL"
+            echo "Passed Tests: $PASSED"
+            echo "Failed Tests: $FAILED"
+            echo "Skipped Tests: $SKIPPED"
+            echo "Test Result: $TEST_RESULT"
+          
+            echo "total=${TOTAL}" >> $GITHUB_OUTPUT
+            echo "passed=${PASSED}" >> $GITHUB_OUTPUT
+            echo "failed=${FAILED}" >> $GITHUB_OUTPUT
+            echo "skipped=${SKIPPED}" >> $GITHUB_OUTPUT
+            echo "test_result=${TEST_RESULT}" >> $GITHUB_OUTPUT
+          else
+            echo "Test summary file not found: $SUMMARY_FILE\n"
+            echo "total=0" >> $GITHUB_OUTPUT
+            echo "passed=0" >> $GITHUB_OUTPUT
+            echo "failed=0" >> $GITHUB_OUTPUT
+            echo "skipped=0" >> $GITHUB_OUTPUT
+            echo "test_result=unknown" >> $GITHUB_OUTPUT
+          fi
+          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "##### Environment: ${{ matrix.env }}" >> $GITHUB_STEP_SUMMARY
+          echo "##### Total Tests: $TOTAL" >> $GITHUB_STEP_SUMMARY
+          echo "##### Passed Tests: $PASSED" >> $GITHUB_STEP_SUMMARY
+          echo "##### Failed Tests: $FAILED" >> $GITHUB_STEP_SUMMARY
+          echo "##### Skipped Tests: $SKIPPED" >> $GITHUB_STEP_SUMMARY
+          echo "##### Test Result: $TEST_RESULT" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "[Test Report]( https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ matrix.env }})" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Reports
         if: always()
@@ -71,13 +111,11 @@ jobs:
         with:
           path: '${{ github.workspace }}/**/build/reports'
           name: reports-${{ matrix.env }}
-
       - name: Checkout gh-pages branch
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
-
       - name: Update environment report
         run: |
           # Create directory for environment if it doesn't exist
@@ -93,3 +131,98 @@ jobs:
           git add "${{ matrix.env }}"
           git commit -m "Update ${{ matrix.env }} Allure report" || echo "No changes to commit"
           git push origin gh-pages
+
+      - name: send teams notification
+        if: always()
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          TEST_RESULT: ${{ steps.test_summary.outputs.test_result }}
+          ENVIRONMENT: ${{ matrix.env }}
+          REPO_NAME: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REPORT_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ matrix.env }}"
+          TOTAL: ${{ steps.test_summary.outputs.total }}
+          PASSED: ${{ steps.test_summary.outputs.passed }}
+          FAILED: ${{ steps.test_summary.outputs.failed }}
+          SKIPPED: ${{ steps.test_summary.outputs.skipped }}
+        run: |
+          # Determine color based on test result
+          if [ "$TEST_RESULT" == "success" ]; then
+            COLOR="00FF00"  # Green for success
+            RESULT_TEXT="✅ PASSED"
+          elif [ "$TEST_RESULT" == "failure" ]; then
+            COLOR="FF0000"  # Red for failure
+            RESULT_TEXT="❌ FAILED"
+          else
+            COLOR="FFA500"  # Orange for unknown status
+            RESULT_TEXT="⚠️ UNKNOWN"
+          fi
+          
+          # Create Teams message card JSON
+          cat > teams_message.json << EOF
+          {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "themeColor": "${COLOR}",
+            "summary": "Test Results for ${ENVIRONMENT}",
+            "sections": [
+              {
+                "activityTitle": "${RESULT_TEXT}: Smoke Tests - ${ENVIRONMENT}",
+                "activitySubtitle": "Repository: ${REPO_NAME}",
+                "facts": [
+                  {
+                    "name": "Environment",
+                    "value": "${ENVIRONMENT}"
+                  },
+                  {
+                    "name": "Total Tests",
+                    "value": "${TOTAL}"
+                  },
+                  {
+                    "name": "Passed",
+                    "value": "${PASSED}"
+                  },
+                  {
+                    "name": "Failed",
+                    "value": "${FAILED}"
+                  },
+                  {
+                    "name": "Skipped",
+                    "value": "${SKIPPED}"
+                  },
+                  {
+                    "name": "Workflow",
+                    "value": "${WORKFLOW_NAME}"
+                  }
+                ],
+                "markdown": true
+              }
+            ],
+            "potentialAction": [
+              {
+                "@type": "OpenUri",
+                "name": "View Test Report",
+                "targets": [
+                  {
+                    "os": "default",
+                    "uri": "${REPORT_URL}"
+                  }
+                ]
+              },
+              {
+                "@type": "OpenUri",
+                "name": "View Workflow Run",
+                "targets": [
+                  {
+                    "os": "default",
+                    "uri": "https://github.com/${REPO_NAME}/actions/runs/${RUN_ID}"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          
+          # Send the message to MS Teams
+          curl -H "Content-Type: application/json" -d @teams_message.json "${TEAMS_WEBHOOK_URL}"
