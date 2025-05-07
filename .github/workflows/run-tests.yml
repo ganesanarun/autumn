@@ -8,13 +8,11 @@ on:
     inputs:
       env:
         description: 'Environment to run tests against'
-        required: false
-        default: ''
+        required: true
         type: choice
         options:
           - production
           - staging
-          - ''
 
 permissions: write-all
 
@@ -61,12 +59,14 @@ jobs:
       - name: Update index.html
         run: |
           # Copy the new index.html file to gh-pages directory
-          cp "${{ github.workspace }}/build/reports/allure-report/allureReport/index.html" gh-pages/
+          ENV="${{ github.event.inputs.env || 'production' }}"
+          mkdir -p "gh-pages/$ENV"
+          cp "${{ github.workspace }}/build/reports/allure-report/allureReport/index.html" "gh-pages/$ENV/"
           
           # Commit and push changes
           cd gh-pages
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add index.html
-          git commit -m "Update Allure report" || echo "No changes to commit"
+          git add "$ENV/index.html"
+          git commit -m "Update $ENV Allure report" || echo "No changes to commit"
           git push origin gh-pages
