@@ -1,4 +1,4 @@
-disabled: false
+disabled: true
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST

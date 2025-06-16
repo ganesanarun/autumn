@@ -27,11 +27,6 @@ asserts:
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
         }
 
       ]

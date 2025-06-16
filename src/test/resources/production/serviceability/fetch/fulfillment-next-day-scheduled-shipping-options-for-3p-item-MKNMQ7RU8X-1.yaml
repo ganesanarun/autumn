@@ -7,7 +7,7 @@ act:
     "itemId": "MKNMQ7RU8X-1"
   }
 asserts:
-  status: 404
+  status: 200
   customization:
     body:
       options:
@@ -16,15 +16,23 @@ asserts:
         - IGNORING_EXTRA_ARRAY_ITEMS
   body:
     {
-
-      "status": 404,
-      "errors": [
+      "isServiceable": true,
+      "itemId": "MKNMQ7RU8X-1",
+      "serviceNodeType": "RETAIL",
+      "shippingOptions": [
         {
-          "code": "ITEM_OUT_OF_STOCK",
-          "message": "MKNMQ7RU8X-1 is out of stock"
+          "shippingMethod": "NEXT_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel": [ "FULFILLMENT_BY" ]
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY",
+          "serviceNodeLogisticsModel": [ "FULFILLMENT_BY" ]
         }
       ]
-
     }
 meta:
   epic: Serviceability
