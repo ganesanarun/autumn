@@ -27,12 +27,9 @@ asserts:
           "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         },
         {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT",
           "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
         },
         {

@@ -1,11 +1,11 @@
 disabled: false
 act:
-  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "124010999"
+    "itemId": "TEST_01"
   }
 asserts:
   status: 200
@@ -18,13 +18,18 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "124010999",
+      "itemId": "TEST_01",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
           "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
+          "shippingMethod": "DATE_RANGE",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
         },
@@ -48,3 +53,14 @@ asserts:
         }
       ]
     }
+meta:
+  epic: Serviceability
+  feature: Fetch API
+  story: Retail Serviceability
+  severity: critical
+  tags:
+    - 1P
+    - serviceability
+    - fetch
+  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
+    and check all shipping options

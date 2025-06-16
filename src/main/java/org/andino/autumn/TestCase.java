@@ -25,6 +25,7 @@ public class TestCase {
     private String disabledReason;
     private Meta meta;
 
+
     public JsonAssert assertThis(JsonNode actual) {
         return asserts.assertBody(actual);
     }
