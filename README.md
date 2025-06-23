@@ -90,7 +90,7 @@ asserts:
   # ...
 meta:
   # ...
-timeWindow:
+schedule:
   activeAfter: "09:00" # Optional, defaults to 00:00
   activeBefore: "17:30" # Optional, defaults to 23:59
   timezone: "America/Santiago" # Optional, defaults to UTC
