@@ -74,6 +74,28 @@ There are some inbuilt matchers as well, such as `any-string`, `any-number`, etc
 }
 ```
 
+## Time-Dependent Tests
+
+The framework supports scheduling tests to run only within a specific time window.
+This is useful for test cases that depend on time-sensitive conditions, such as business hours or cut-off times for
+shipping options.
+
+To implement this, the `TestCase` class includes a `timeWindow` field that specifies the start and end times for the test
+case. The `HttpRequestExecutor` class checks the current time against this window before executing the test case.
+
+```yaml
+act:
+  # ...
+asserts:
+  # ...
+meta:
+  # ...
+timeWindow:
+  activeAfter: "09:00" # Optional, defaults to 00:00
+  activeBefore: "17:30" # Optional, defaults to 23:59
+  timezone: "America/Santiago" # Optional, defaults to UTC
+```
+
 ## Build Configuration
 
 The build configuration is defined in the `build.gradle` file. The project uses the Spring Boot Gradle plugin, the

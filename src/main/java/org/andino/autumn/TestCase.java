@@ -24,6 +24,7 @@ public class TestCase {
     private boolean disabled;
     private String disabledReason;
     private Meta meta;
+    private TimeWindow schedule;
 
     public JsonAssert assertThis(JsonNode actual) {
         return asserts.assertBody(actual);
@@ -34,6 +35,10 @@ public class TestCase {
     }
 
     public String getDisabledReason() {
+        if (isOutsideScheduledTime()) {
+            return "Test is outside of the execution window: " + schedule.getActiveAfter() + " - " + schedule.getActiveBefore();
+        }
+
         return StringUtils.hasText(disabledReason) ? disabledReason : "Test is disabled in YAML configuration";
     }
 
@@ -46,7 +51,7 @@ public class TestCase {
     }
 
     private void annotateDisabled() {
-        if (isDisabled()) {
+        if (shouldBeSkipped()) {
             Allure.step("Test is disabled: " + getDisabledReason());
         }
     }
@@ -69,7 +74,7 @@ public class TestCase {
     }
 
     private void annotateRequest() {
-        if (!isDisabled()) {
+        if (!shouldBeSkipped()) {
             getAct().annotate();
         }
     }
@@ -81,5 +86,14 @@ public class TestCase {
     private void removePackage() {
         Allure.getLifecycle().updateTestCase(testResult -> testResult.getLabels().removeIf(label -> label.getName().equals("suite")));
     }
+
+    private boolean isOutsideScheduledTime() {
+        return schedule != null && schedule.isOutsideExecutionWindow();
+    }
+
+    public boolean shouldBeSkipped() {
+        return isDisabled() || isOutsideScheduledTime();
+    }
+
 }
 

@@ -83,7 +83,7 @@ class AutomationTests {
         var testCase = yamlReader.readYamlFile(testInfo.filePath());
         return dynamicTest(testInfo.getTestName(), () -> {
             testCase.annotateFor(testInfo);
-            if (testCase.isDisabled()) {
+            if (testCase.shouldBeSkipped()) {
                 throw new TestAbortedException(testCase.getDisabledReason());
             }
 
