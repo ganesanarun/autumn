@@ -1,4 +1,4 @@
-package org.andino.autumn;
+package org.andino.autumn.spec;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

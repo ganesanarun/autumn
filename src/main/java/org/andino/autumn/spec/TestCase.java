@@ -1,4 +1,4 @@
-package org.andino.autumn;
+package org.andino.autumn.spec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.qameta.allure.Allure;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.javacrumbs.jsonunit.assertj.JsonAssert;
+import org.andino.autumn.FileMeta;
 import org.assertj.core.api.AbstractIntegerAssert;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.util.StringUtils;
@@ -42,7 +43,7 @@ public class TestCase {
         return StringUtils.hasText(disabledReason) ? disabledReason : "Test is disabled in YAML configuration";
     }
 
-    void annotateFor(FileMeta testInfo) {
+    public void annotateFor(FileMeta testInfo) {
         removePackage();
         annotateSuite(testInfo);
         getMeta().annotate();

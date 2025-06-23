@@ -1,4 +1,4 @@
-package org.andino.autumn;
+package org.andino.autumn.spec;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;

@@ -3,6 +3,7 @@ package org.andino.autumn;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.qameta.allure.Allure;
 import org.andino.autumn.executors.HttpRequestExecutor;
+import org.andino.autumn.spec.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;

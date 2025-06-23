@@ -1,4 +1,4 @@
-package org.andino.autumn;
+package org.andino.autumn.spec;
 
 import io.qameta.allure.Allure;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package org.andino.autumn;
+package org.andino.autumn.spec;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
