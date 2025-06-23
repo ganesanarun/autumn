@@ -45,3 +45,6 @@ meta:
     - fetch
   description: Fetch serviceability for item MKNMQ7RU8X-1 in comuna 13114
     and check all shipping options
+schedule:
+  activeAfter: 10:00
+  activeBefore: 13:00
