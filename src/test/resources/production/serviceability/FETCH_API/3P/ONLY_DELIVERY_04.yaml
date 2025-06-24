@@ -1,10 +1,11 @@
+disabled: false
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MKSLAS3G7I-1"
+    "itemId": "MK03XCS09S-1"
   }
 asserts:
   status: 200
@@ -17,37 +18,43 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MKSLAS3G7I-1",
-      "serviceNodeType": "SELLER",
+      "itemId": "MK03XCS09S-1",
+      "networkStockLevel": "IN_STOCK",
+      "serviceNodeType": "RETAIL",
+      "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
+          "shippingType": "DELIVERY"
         },
         {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "COPEC",
-          "shippingType": "COLLECT",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
-        },
-        {
-          "shippingMethod": "DATE_RANGE",
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "SAME_DAY",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
+          "shippingType": "DELIVERY"
+        },
+        {
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "NEXT_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
         }
+
       ]
     }
 meta:
   epic: Serviceability
   feature: Fetch API
-  story: Market Place Serviceability
+  story: Retail Serviceability
   severity: critical
   tags:
-    - 3P
+    - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item MKSLAS3G7I-1 in comuna 13114
+  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
     and check all shipping options
