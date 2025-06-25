@@ -1,10 +1,13 @@
+disabled: false
+activeBefore: "14:00" # Optional, defaults to 23:59
+timezone: "America/Santiago" # Optional, defaults to UTC
 act:
-  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "143421003"
+    "itemId": "TEST_02"
   }
 asserts:
   status: 200
@@ -17,7 +20,7 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "143421003",
+      "itemId": "TEST_02",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
@@ -28,25 +31,17 @@ asserts:
           "shippingType": "DELIVERY"
         },
         {
+          "shippingMethod": "DATE_RANGE",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
           "estimatedDelivery": {
             "orderBy": "${json-unit.matches:any-zoned-date-time}"
           },
           "shippingMethod": "NEXT_DAY",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "SAME_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "COPEC",
-          "shippingType": "COLLECT"
         },
         {
           "shippingMethod": "SCHEDULED",
@@ -64,5 +59,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item 124010999 in comuna 13114
+  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
     and check all shipping options

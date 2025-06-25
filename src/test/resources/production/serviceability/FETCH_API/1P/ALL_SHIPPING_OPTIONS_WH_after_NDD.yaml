@@ -1,3 +1,6 @@
+schedule:
+  activeAfter: "23:50"
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
@@ -27,22 +30,7 @@ asserts:
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
         },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "SAME_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
+
         {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "COPEC",

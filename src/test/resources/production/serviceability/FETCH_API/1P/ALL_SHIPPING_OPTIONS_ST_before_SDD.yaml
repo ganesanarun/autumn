@@ -1,10 +1,13 @@
+schedule:
+  activeBefore: "18:00"
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "112238999"
+    "itemId": "143421003"
   }
 asserts:
   status: 200
@@ -17,7 +20,7 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "112238999",
+      "itemId": "143421003",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
@@ -27,14 +30,7 @@ asserts:
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
         },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
+
         {
           "estimatedDelivery": {
             "orderBy": "${json-unit.matches:any-zoned-date-time}"
@@ -42,6 +38,16 @@ asserts:
           "shippingMethod": "SAME_DAY",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "IN_STORE",
+          "shippingType": "COLLECT"
         }
       ]
     }

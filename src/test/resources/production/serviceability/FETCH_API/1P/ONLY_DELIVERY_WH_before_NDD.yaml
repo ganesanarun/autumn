@@ -1,0 +1,54 @@
+schedule:
+  activeBefore: "20:50"
+  timezone: "America/Santiago" # Optional, defaults to UTC
+act:
+  url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
+  method: POST
+  body: {
+    "geoType": "COMUNA",
+    "geoCode": "13114",
+    "itemId": "112238999"
+  }
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_ARRAY_ORDER
+        - IGNORING_EXTRA_ARRAY_ITEMS
+  body:
+    {
+      "isServiceable": true,
+      "itemId": "112238999",
+      "networkStockLevel": "IN_STOCK",
+      "serviceNodeType": "RETAIL",
+      "serviceableStockLevel": "IN_STOCK",
+      "shippingOptions": [
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "NEXT_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        }
+
+      ]
+    }
+meta:
+  epic: Serviceability
+  feature: Fetch API
+  story: Retail Serviceability
+  severity: critical
+  tags:
+    - 1P
+    - serviceability
+    - fetch
+  description: Fetch serviceability for item 124010999 in comuna 13114
+    and check all shipping options

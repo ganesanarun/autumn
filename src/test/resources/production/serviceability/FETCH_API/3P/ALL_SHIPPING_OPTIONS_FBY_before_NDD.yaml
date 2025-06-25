@@ -1,11 +1,14 @@
 disabled: false
+schedule:
+  activeBefore: "20:50" # Optional, defaults to 23:59
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MKSLAS3G7I-1"
+    "itemId": "MKDTQGL6XU-1"
   }
 asserts:
   status: 200
@@ -18,9 +21,9 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MKSLAS3G7I-1",
+      "itemId": "MKDTQGL6XU-1",
       "networkStockLevel": "IN_STOCK",
-      "serviceNodeType": "SELLER",
+      "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
@@ -29,23 +32,12 @@ asserts:
           "shippingType": "DELIVERY"
         },
         {
-          "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-
-        {
           "estimatedDelivery": {
             "orderBy": "${json-unit.matches:any-zoned-date-time}"
           },
           "shippingMethod": "NEXT_DAY",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "COPEC",
-          "shippingType": "COLLECT"
         }
 
 

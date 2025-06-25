@@ -1,11 +1,13 @@
-disabled: false
+schedule:
+  activeAfter: "14:00"
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MK03XCS09S-1"
+    "itemId": "866843002"
   }
 asserts:
   status: 200
@@ -18,7 +20,7 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MK03XCS09S-1",
+      "itemId": "866843002",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
@@ -28,6 +30,7 @@ asserts:
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
         },
+
         {
           "estimatedDelivery": {
             "orderBy": "${json-unit.matches:any-zoned-date-time}"
@@ -35,16 +38,7 @@ asserts:
           "shippingMethod": "SAME_DAY",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
         }
-
       ]
     }
 meta:
@@ -56,5 +50,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
+  description: Fetch serviceability for item 124010999 in comuna 13114
     and check all shipping options
