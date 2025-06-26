@@ -26,7 +26,6 @@ public class TestCase {
     private Meta meta;
     private TimeWindow schedule;
 
-
     public JsonAssert assertThis(JsonNode actual) {
         return asserts.assertBody(actual);
     }

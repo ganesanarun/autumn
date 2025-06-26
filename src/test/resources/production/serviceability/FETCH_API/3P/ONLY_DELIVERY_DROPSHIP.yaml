@@ -46,5 +46,8 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
+  description: Fetch serviceability for item MKNMQ7RU8X-1 in comuna 13114
     and check all shipping options
+schedule:
+  activeAfter: 10:00
+  activeBefore: 13:00
