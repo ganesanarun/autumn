@@ -1,4 +1,5 @@
 schedule:
+  activeAfter: "14:00"
   activeBefore: "18:00"
   timezone: "America/Santiago" # Optional, defaults to UTC
 act:

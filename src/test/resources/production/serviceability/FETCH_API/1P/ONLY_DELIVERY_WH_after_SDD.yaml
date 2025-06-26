@@ -1,5 +1,6 @@
 schedule:
   activeAfter: "13:50"
+  activeBefore: "23:50"
   timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
