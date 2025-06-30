@@ -87,6 +87,7 @@ class AutomationTests {
                 throw new TestAbortedException(testCase.getDisabledReason());
             }
 
+
             var response = httpRequestExecutor.execute(testCase);
 
             testCase.assertThis(response.getStatus());

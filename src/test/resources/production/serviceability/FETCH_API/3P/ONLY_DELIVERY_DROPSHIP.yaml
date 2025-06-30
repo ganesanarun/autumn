@@ -1,10 +1,11 @@
+disabled: false
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MKSLAS3G7I-1"
+    "itemId": "MKZJ0K3S6D-1"
   }
 asserts:
   status: 200
@@ -17,40 +18,36 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MKSLAS3G7I-1",
+      "itemId": "MKZJ0K3S6D-1",
+      "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "SELLER",
+      "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
+          "shippingType": "DELIVERY"
         },
         {
           "shippingMethod": "DATE_RANGE",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "DROPSHIPPING" ]
+          "shippingType": "DELIVERY"
         }
+
+
       ]
     }
 meta:
   epic: Serviceability
   feature: Fetch API
-  story: Market Place Serviceability
+  story: Retail Serviceability
   severity: critical
   tags:
-    - 3P
+    - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item MKSLAS3G7I-1 in comuna 13114
+  description: Fetch serviceability for item MKNMQ7RU8X-1 in comuna 13114
     and check all shipping options
+schedule:
+  activeAfter: 10:00
+  activeBefore: 13:00

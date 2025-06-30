@@ -3,8 +3,8 @@ act:
   method: POST
   body: {
     "geoType": "COMUNA",
-    "geoCode": "13114",
-    "itemId": "153998999"
+    "geoCode": "01405",
+    "itemId": "124010999"
   }
 asserts:
   status: 200
@@ -17,24 +17,11 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "153998999",
+      "itemId": "124010999",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
-        {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
         {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "COPEC",
@@ -56,5 +43,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item 153998999 in comuna 13114
+  description: Fetch serviceability for item 124010999 in comuna 13114
     and check all shipping options

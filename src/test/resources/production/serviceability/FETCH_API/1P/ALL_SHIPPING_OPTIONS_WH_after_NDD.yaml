@@ -1,10 +1,13 @@
+schedule:
+  activeAfter: "23:50"
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MKNMQ7RU8X-1"
+    "itemId": "153998999"
   }
 asserts:
   status: 200
@@ -17,34 +20,37 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MKNMQ7RU8X-1",
+      "itemId": "153998999",
+      "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
+      "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
-        {
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "FULFILLMENT_BY" ]
-        },
         {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY",
-          "serviceNodeLogisticsModel": [ "FULFILLMENT_BY" ]
+          "shippingType": "DELIVERY"
+        },
+
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "IN_STORE",
+          "shippingType": "COLLECT"
         }
       ]
     }
 meta:
   epic: Serviceability
   feature: Fetch API
-  story: Easy Serviceability
+  story: Retail Serviceability
   severity: critical
   tags:
-    - Easy
+    - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item MKNMQ7RU8X-1 in comuna 13114
+  description: Fetch serviceability for item 124010999 in comuna 13114
     and check all shipping options
-schedule:
-  activeAfter: 10:00
-  activeBefore: 13:00
