@@ -1,11 +1,13 @@
-disabled: false
+schedule:
+  activeAfter: "21:00" # Optional, defaults to 23:59
+  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "TEST_10"
+    "itemId": "TEST_AUTOMATION_006"
   }
 asserts:
   status: 200
@@ -18,7 +20,7 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "TEST_10",
+      "itemId": "TEST_AUTOMATION_006",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
@@ -35,19 +37,14 @@ asserts:
         },
         {
           "shippingMethod": "SCHEDULED",
-          "shippingSubType": "COPEC",
+          "shippingSubType": "IN_STORE",
           "shippingType": "COLLECT"
         },
         {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
         }
-
-
       ]
     }
 meta:
@@ -59,5 +56,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
-    and check all shipping options
+  description: Fetch serviceability for item TEST_AUTOMATION_006 in comuna 13114
+    and check all shipping options (FULFILMENTBY) after SDD,NDD

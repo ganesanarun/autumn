@@ -4,8 +4,8 @@ act:
   method: POST
   body: {
     "geoType": "COMUNA",
-    "geoCode": "13123",
-    "itemId": "TEST_07"
+    "geoCode": "13114",
+    "itemId": "TEST_AUTOMATION_004"
   }
 asserts:
   status: 200
@@ -18,7 +18,7 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "TEST_07",
+      "itemId": "TEST_AUTOMATION_004",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
@@ -27,8 +27,12 @@ asserts:
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
+        },
+        {
+          "shippingMethod": "DATE_RANGE",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
         }
-
       ]
     }
 meta:
@@ -40,5 +44,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
-    and check all shipping options
+  description: Fetch serviceability for item TEST_AUTOMATION_004 in comuna 13114
+    and check ONLY DELIVERY (STORE) shipping options

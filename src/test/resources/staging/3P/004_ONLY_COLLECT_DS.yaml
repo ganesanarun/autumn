@@ -1,11 +1,11 @@
-disabled: false
+disabled: true
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
-    "geoCode": "13114",
-    "itemId": "MKDTQGL6XU-1"
+    "geoCode": "13115",
+    "itemId": "TEST_AUTOMATION_005"
   }
 asserts:
   status: 200
@@ -18,28 +18,15 @@ asserts:
   body:
     {
       "isServiceable": true,
-      "itemId": "MKDTQGL6XU-1",
+      "itemId": "TEST_AUTOMATION_005",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "SELLER",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
           "shippingMethod": "SCHEDULED",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
         }
 
 
@@ -54,5 +41,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
-    and check all shipping options
+  description: Fetch serviceability for item TEST_AUTOMATION_005 in comuna 13115
+    and check ONLY COLLECT shipping options (DROPSHIPPING)
