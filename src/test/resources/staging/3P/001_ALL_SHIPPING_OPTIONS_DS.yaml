@@ -1,6 +1,3 @@
-schedule:
-  activeBefore: "21:00" # Optional, defaults to 23:59
-  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
@@ -14,45 +11,105 @@ asserts:
   customization:
     body:
       options:
-        - IGNORING_EXTRA_FIELDS
+
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
       "itemId": "TEST_AUTOMATION_005",
       "networkStockLevel": "IN_STOCK",
-      "serviceNodeType": "SELLER",
       "serviceableStockLevel": "IN_STOCK",
+      "serviceableStockQty": {
+        "unitOfMeasure": "UNITS",
+        "value": 350
+      },
+      "totalServiceableStockQty": {
+        "unitOfMeasure": "UNITS",
+        "value": 350
+      },
+      "serviceNodeCode": "AUTOMATION_NODE_5",
+      "serviceNodeType": "SELLER",
+      "serviceNodeCategory": "WAREHOUSE",
+      "serviceNodeLogisticsModel": [
+        "DROPSHIPPING"
+      ],
       "shippingOptions": [
-        {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
 
         {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
+          "shippingType": "DELIVERY",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingMethod": "SCHEDULED",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_5",
+          "serviceNodeType": "SELLER",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "DROPSHIPPING"
+          ]
         },
         {
-          "shippingMethod": "SCHEDULED",
+          "shippingType": "DELIVERY",
+          "shippingSubType": "HOME",
+          "shippingMethod": "DATE_RANGE",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_5",
+          "serviceNodeType": "SELLER",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "DROPSHIPPING"
+          ]
+        },
+        {
+          "shippingType": "DELIVERY",
+          "shippingSubType": "HOME",
+          "shippingMethod": "NEXT_DAY",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_5",
+          "serviceNodeType": "SELLER",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "DROPSHIPPING"
+          ],
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          }
+        },
+        {
+          "shippingType": "COLLECT",
           "shippingSubType": "COPEC",
-          "shippingType": "COLLECT"
+          "shippingMethod": "SCHEDULED",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_5",
+          "serviceNodeType": "SELLER",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "DROPSHIPPING"
+          ]
         }
 
 
       ]
     }
+schedule:
+  activeBefore: "23:59"
+  timezone: "America/Santiago"
 meta:
   epic: Serviceability
   feature: Fetch API
@@ -63,4 +120,4 @@ meta:
     - serviceability
     - fetch
   description: Fetch serviceability for item TEST_AUTOMATION_005 in comuna 13115
-    and check all shipping options (DROPSHIPPING)
+    and check all shipping options (DROPSHIPPING) and check the response structure

@@ -1,6 +1,3 @@
-schedule:
-  activeBefore: "21:00" # Optional, defaults to 23:59
-  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
@@ -14,56 +11,138 @@ asserts:
   customization:
     body:
       options:
-        - IGNORING_EXTRA_FIELDS
+
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
       "itemId": "TEST_AUTOMATION_001",
       "networkStockLevel": "IN_STOCK",
-      "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
+      "serviceableStockQty": {
+        "unitOfMeasure": "UNITS",
+        "value": 350
+      },
+      "totalServiceableStockQty": {
+        "unitOfMeasure": "UNITS",
+        "value": 350
+      },
+      "serviceNodeCode": "AUTOMATION_NODE_1",
+      "serviceNodeType": "RETAIL",
+      "serviceNodeCategory": "WAREHOUSE",
+      "serviceNodeLogisticsModel": [
+        "OWNED"
+      ],
       "shippingOptions": [
         {
-          "shippingMethod": "SCHEDULED",
+          "shippingType": "DELIVERY",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingMethod": "SCHEDULED",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ]
         },
         {
+          "shippingType": "DELIVERY",
+          "shippingSubType": "HOME",
           "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ]
         },
         {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
-          "shippingMethod": "NEXT_DAY",
+          "shippingType": "DELIVERY",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "estimatedDelivery": {
-            "orderBy": "${json-unit.matches:any-zoned-date-time}"
-          },
           "shippingMethod": "SAME_DAY",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ],
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          }
+        },
+        {
+          "shippingType": "DELIVERY",
           "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingMethod": "NEXT_DAY",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ],
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          }
         },
         {
-          "shippingMethod": "SCHEDULED",
-          "shippingSubType": "IN_STORE",
-          "shippingType": "COLLECT"
-        },
-        {
-          "shippingMethod": "SCHEDULED",
+          "shippingType": "COLLECT",
           "shippingSubType": "COPEC",
-          "shippingType": "COLLECT"
+          "shippingMethod": "SCHEDULED",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ]
+        },
+        {
+          "shippingType": "COLLECT",
+          "shippingSubType": "IN_STORE",
+          "shippingMethod": "SCHEDULED",
+          "serviceableStockLevel": "IN_STOCK",
+          "serviceableStockQty": {
+            "unitOfMeasure": "UNITS",
+            "value": 350
+          },
+          "serviceNodeCode": "AUTOMATION_NODE_1",
+          "serviceNodeType": "RETAIL",
+          "serviceNodeCategory": "WAREHOUSE",
+          "serviceNodeLogisticsModel": [
+            "OWNED"
+          ]
         }
 
       ]
     }
+schedule:
+  activeBefore: "21:00"
+  timezone: "America/Santiago"
 meta:
   epic: Serviceability
   feature: Fetch API
@@ -74,4 +153,5 @@ meta:
     - serviceability
     - fetch
   description: Fetch serviceability for item TEST_AUTOMATION_001 in comuna 13114
-    and check all shipping options before SDD cut off time
+    and check all shipping options before SDD cut off time and check the response structure
+

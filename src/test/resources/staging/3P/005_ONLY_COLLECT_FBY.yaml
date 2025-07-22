@@ -13,7 +13,7 @@ asserts:
       options:
         - IGNORING_EXTRA_FIELDS
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,

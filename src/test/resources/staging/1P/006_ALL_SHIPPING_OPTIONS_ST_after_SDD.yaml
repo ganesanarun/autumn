@@ -1,6 +1,3 @@
-schedule:
-  activeAfter: "21:00" # Optional, defaults to 23:59
-  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm-stg.cencosud.com/api/v1/serviceability/fetch
   method: POST
@@ -16,7 +13,7 @@ asserts:
       options:
         - IGNORING_EXTRA_FIELDS
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
@@ -42,6 +39,9 @@ asserts:
         }
       ]
     }
+schedule:
+  activeAfter: "21:00"
+  timezone: "America/Santiago"
 meta:
   epic: Serviceability
   feature: Fetch API
