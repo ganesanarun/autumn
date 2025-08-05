@@ -46,6 +46,15 @@ library is used to convert JSON and YAML data to and from `JsonNode` objects.
 The framework leverages the dynamic test capabilities of the JUnit library. Each YAML file is treated as a separate
 test, allowing for efficient execution and reporting of test results.
 
+## Generate random data in request body
+
+${generate:datetime} => Generates a random utc date time string in ISO-8601 format.
+${generate:string:fileName} => Generates a random string from the file with the given name.
+${generate:string:uuid} => Generates a random UUID string.
+
+> In the future, the framework will be extended to support more data generation options, such as generating random
+> numbers, dates, and other types of data.
+
 ## JSON Assertions with json-unit
 
 The Autumn codebase uses the json-unit library for writing assertions for JSON data in tests. It provides a fluent API
@@ -80,16 +89,17 @@ The framework supports scheduling tests to run only within a specific time windo
 This is useful for test cases that depend on time-sensitive conditions, such as business hours or cut-off times for
 shipping options.
 
-To implement this, the `TestCase` class includes a `timeWindow` field that specifies the start and end times for the test
+To implement this, the `TestCase` class includes a `timeWindow` field that specifies the start and end times for the
+test
 case. The `HttpRequestExecutor` class checks the current time against this window before executing the test case.
 
 ```yaml
 act:
-  # ...
+# ...
 asserts:
-  # ...
+# ...
 meta:
-  # ...
+# ...
 schedule:
   activeAfter: "09:00" # Optional, defaults to 00:00
   activeBefore: "17:30" # Optional, defaults to 23:59
