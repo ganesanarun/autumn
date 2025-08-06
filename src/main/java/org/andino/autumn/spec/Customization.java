@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Customization {
-    private Body body;
-}
 
+	private Body body;
+
+}

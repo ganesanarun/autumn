@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 public record Node(String name, List<DynamicTest> tests, Map<String, Node> children) {
-    public Node(String name) {
-        this(name, new ArrayList<>(), new HashMap<>());
-    }
+	public Node(String name) {
+		this(name, new ArrayList<>(), new HashMap<>());
+	}
 
-    public Node getOrCreateChild(String name) {
-        return children.computeIfAbsent(name, Node::new);
-    }
+	public Node getOrCreateChild(String name) {
+		return children.computeIfAbsent(name, Node::new);
+	}
 
-    public void addTests(List<DynamicTest> testsToAdd) {
-        this.tests.addAll(testsToAdd);
-    }
+	public void addTests(List<DynamicTest> testsToAdd) {
+		this.tests.addAll(testsToAdd);
+	}
 }

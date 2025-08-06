@@ -1,0 +1,137 @@
+arrange:
+  - name: Add Supply To Begin Full Sync
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body: {
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "items": [
+          {
+            "id": "test-sku-002",
+            "nodeCode": "test_node",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 11,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:1minutesAgo}",
+          },
+          {
+            "id": "test-sku-003",
+            "nodeCode": "test_node",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 11,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:1minutesAgo}",
+          }
+        ]
+      }
+
+  - name: Begin Full Sync
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v2/full-sync
+      method: POST
+      body: {
+        "system": "PARIS_EOM",
+        "nodeCode": "test_node",
+        "generatedAt": "${generate:datetime:now}",
+        "fileName": "${generate:string:fileName}.csv",
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "batches": [
+          {
+            "startIndex": 0,
+            "endIndex": 2
+          }
+        ]
+      }
+    saveResponseAs: beginFullSync
+
+  - name: Update Batch Status - STARTED
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/full-sync/batch
+      method: PUT
+      body: {
+        "fullSyncBatchId": {
+          "id": "${beginFullSync.batches[0].batchId.id}",
+          "createdAt": "${beginFullSync.batches[0].batchId.createdAt}"
+        },
+        "status": "STARTED",
+      }
+
+  - name: Update Supplies
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies
+      method: PUT
+      body: {
+        "meta": {
+          "jobId": {
+            "id": "${beginFullSync.jobId.id}",
+            "createdAt": "${beginFullSync.jobId.createdAt}"
+          }
+        },
+        "items": [
+          {
+            "id": "test-sku-002",
+            "nodeCode": "test_node",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 35,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime}"
+          },
+          {
+            "id": "test-sku-003",
+            "nodeCode": "test_node",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 8,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime}"
+          }
+        ]
+      }
+
+  - name: Update Batch Status - COMPLETED
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/full-sync/batch
+      method: PUT
+      body: {
+        "fullSyncBatchId": {
+          "id": "${beginFullSync.batches[0].batchId.id}",
+          "createdAt": "${beginFullSync.batches[0].batchId.createdAt}"
+        },
+        "status": "COMPLETED"
+      }
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/full-sync
+  method: PUT
+  body: {
+    "fullSyncId": {
+      "id": "${beginFullSync.fullSyncId.id}",
+      "createdAt": "${beginFullSync.fullSyncId.createdAt}"
+    },
+    "status": "COMPLETED"
+  }
+
+asserts:
+  status: 204

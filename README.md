@@ -48,9 +48,13 @@ test, allowing for efficient execution and reporting of test results.
 
 ## Generate random data in request body
 
+```fossil
 ${generate:datetime} => Generates a random utc date time string in ISO-8601 format.
+
 ${generate:string:fileName} => Generates a random string from the file with the given name.
+
 ${generate:string:uuid} => Generates a random UUID string.
+```
 
 > In the future, the framework will be extended to support more data generation options, such as generating random
 > numbers, dates, and other types of data.

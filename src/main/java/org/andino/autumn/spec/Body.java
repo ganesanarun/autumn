@@ -13,5 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Body {
-    private List<Option> options;
+
+	private List<Option> options;
+
 }

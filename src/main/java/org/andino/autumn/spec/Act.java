@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.qameta.allure.Allure;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.andino.autumn.serializers.PlaceHolderResolver;
 import org.springframework.http.HttpMethod;
 
 import java.net.URI;
@@ -18,9 +18,13 @@ import java.net.URI;
 @Getter
 @NoArgsConstructor
 @ToString
+@Builder(toBuilder = true)
 public class Act {
+
 	private String url;
+
 	private HttpMethod method;
+
 	private JsonNode body;
 
 	public URI getUri() {
@@ -34,8 +38,9 @@ public class Act {
 	public void setBody(JsonNode body) {
 		if (body == null) {
 			this.body = JsonNodeFactory.instance.nullNode();
-		} else {
-			this.body = PlaceHolderResolver.resolve(body);
+		}
+		else {
+			this.body = body;
 		}
 	}
 
@@ -48,4 +53,9 @@ public class Act {
 			}
 		});
 	}
+
+	public Act withBody(JsonNode body) {
+		return this.toBuilder().body(body).build();
+	}
+
 }

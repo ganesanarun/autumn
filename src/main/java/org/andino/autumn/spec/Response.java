@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public class Response {
 
-    HttpStatusCode status;
+	HttpStatusCode status;
 
-    JsonNode responseBody;
+	JsonNode responseBody;
 
-    HttpHeaders headers;
+	HttpHeaders headers;
 
 }

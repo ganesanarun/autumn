@@ -18,16 +18,28 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 @Getter
 @Setter
 public class Assert {
-    private int status;
-    private JsonNode body;
-    private HttpHeaders headers;
-    private Customization customization;
 
-    public JsonAssert assertBody(JsonNode actual) {
-        if (customization == null || customization.getBody() == null || customization.getBody().getOptions().isEmpty()) {
-            return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher()).withMatcher("any-uuid", new AnyUUIDMatcher()).isEqualTo(body);
-        }
+	private int status;
 
-        return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher()).withMatcher("any-uuid", new AnyUUIDMatcher()).when(customization.getBody().getOptions().getFirst(), customization.getBody().getOptions().toArray(Option[]::new)).isEqualTo(body);
-    }
+	private JsonNode body;
+
+	private HttpHeaders headers;
+
+	private Customization customization;
+
+	public JsonAssert assertBody(JsonNode actual) {
+		if (customization == null || customization.getBody() == null
+				|| customization.getBody().getOptions().isEmpty()) {
+			return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher())
+				.withMatcher("any-uuid", new AnyUUIDMatcher())
+				.isEqualTo(body);
+		}
+
+		return assertThatJson(actual).withMatcher("any-zoned-date-time", new AnyZonedDateTimeMatcher())
+			.withMatcher("any-uuid", new AnyUUIDMatcher())
+			.when(customization.getBody().getOptions().getFirst(),
+					customization.getBody().getOptions().toArray(Option[]::new))
+			.isEqualTo(body);
+	}
+
 }
