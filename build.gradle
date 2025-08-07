@@ -171,10 +171,10 @@ tasks.create('generateTestSummary') {
             testSuits.each {
                 def suite = new XmlParser().parse(it)
 
-                def tests = suite.@tests[0] as Integer ?: 0
-                def failures = suite.@failures[0] as Integer ?: 0
-                def errors = suite.@errors[0] as Integer ?: 0
-                def skipped = suite.@skipped[0] as Integer ?: 0
+                def tests = suite.@tests as Integer ?: 0
+                def failures = suite.@failures as Integer ?: 0
+                def errors = suite.@errors as Integer ?: 0
+                def skipped = suite.@skipped as Integer ?: 0
 
                 totalTests += tests
                 skippedTests += skipped
