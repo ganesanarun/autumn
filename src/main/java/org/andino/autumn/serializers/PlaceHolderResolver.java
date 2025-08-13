@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -31,6 +32,19 @@ public class PlaceHolderResolver {
 	}
 
 	public static JsonNode resolve(JsonNode node, Map<String, JsonNode> context) {
+		if (node == null || context == null) {
+			return node;
+		}
+
+		if (node.isTextual() && node.asText().startsWith("&")) {
+			var contextKey = node.asText().substring(1);
+			return context.getOrDefault(contextKey, JsonNodeFactory.instance.nullNode());
+		}
+
+		return resolveComplexObject(node, context);
+	}
+
+	private static JsonNode resolveComplexObject(JsonNode node, Map<String, JsonNode> context) {
 		if (node.isObject()) {
 			ObjectNode objectNode = (ObjectNode) node;
 			objectNode.fieldNames().forEachRemaining(field -> {
@@ -97,15 +111,13 @@ public class PlaceHolderResolver {
 					node = node.get(index);
 				}
 				else {
-					return JsonNodeFactory.instance.nullNode(); // out-of-bounds or not an
-																// array
+					return JsonNodeFactory.instance.nullNode();
 				}
 			}
 			else {
 				node = node.path(part);
 			}
 		}
-
 		return node;
 	}
 
@@ -113,14 +125,28 @@ public class PlaceHolderResolver {
 		String[] parts = expr.split(":");
 		String key = parts[0];
 		return switch (key) {
-			case "datetime" -> resolveTimeFor();
+			case "datetime" -> resolveTimeFor(parts);
 			case "string" -> resolveStringFor(parts);
 			default -> expr;
 		};
 	}
 
-	private static Object resolveTimeFor() {
-		return ZonedDateTime.now(ZoneId.of("UTC")).format(isoTimeFormatter);
+	private static Object resolveTimeFor(String[] parts) {
+		ZonedDateTime time = ZonedDateTime.now(ZoneId.of("UTC"));
+		if (parts.length >= 2) {
+			var modifier = parts[1].toLowerCase(Locale.ENGLISH);
+			var isAgo = modifier.endsWith("ago");
+			var isAfter = modifier.endsWith("after");
+
+			if (isAfter || isAgo) {
+				var amount = modifier.replaceAll("[^0-9]", "").isEmpty() ? 1
+						: Integer.parseInt(modifier.replaceAll("[^0-9]", ""));
+				var unit = modifier.replaceAll("[0-9]", "").replace("ago", "").replace("after", "").toUpperCase();
+				time = isAfter ? time.plus(amount, ChronoUnit.valueOf(unit))
+						: time.minus(amount, ChronoUnit.valueOf(unit));
+			}
+		}
+		return time.format(isoTimeFormatter);
 	}
 
 	private static Object resolveStringFor(String[] parts) {

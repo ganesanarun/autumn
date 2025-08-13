@@ -50,14 +50,59 @@ test, allowing for efficient execution and reporting of test results.
 
 ```fossil
 ${generate:datetime} => Generates a random utc date time string in ISO-8601 format.
+${generate:datetime:1minutesAgo} => Generates a random utc date time string in ISO-8601 format, 1 minute ago.
+${generate:datetime:1minutesAfter} => Generates a random utc date time string in ISO-8601 format, 1 minute after now.
 
 ${generate:string:fileName} => Generates a random string from the file with the given name.
 
 ${generate:string:uuid} => Generates a random UUID string.
 ```
 
+datetime supports following chrono units:
+
+```yaml
+- nanos
+- micros
+- seconds
+- minutes
+- hours
+- days
+- weeks
+- months
+- years
+- decades
+- centuries
+- millennia
+```
+
 > In the future, the framework will be extended to support more data generation options, such as generating random
 > numbers, dates, and other types of data.
+
+## Referring responses from previous steps in request body
+The framework allows referring to responses from previous steps in the request body. This is useful for chaining
+requests together, where the output of one request is used as input for another.
+For example, if you have a test case that creates a resource and then retrieves it, you can refer to the ID of the
+created resource in the subsequent request.
+```yaml
+arrange:
+  - name: "Create Resource A"
+    type: api
+    act:
+      url: "/api/resources"
+      method: POST
+      body: {
+        "name": "Resource A",
+        "createdAt": "${generate:datetime}"
+      }
+      saveResponseAs: resourceA
+act:
+  url: "/api/resources"
+  method: PUT
+  body: {
+    "name": "Update Resource A",
+    "id": "${resourceA:id}"
+  }
+```
 
 ## JSON Assertions with json-unit
 
@@ -66,25 +111,25 @@ for comparing expected and actual JSON data, and supports various comparison mod
 treating null and missing fields as equals, and more. The assertThatJson method from json-unit is used in the Assert
 part of the test case to validate the response body.
 
-### Custom Matchers
+  ### Custom Matchers
 
-The application also includes custom matchers like `AnyDateTimeMatcher` and `AnyUUIDMatcher` for specific assertion
-needs.
+  The application also includes custom matchers like `AnyDateTimeMatcher` and `AnyUUIDMatcher` for specific assertion
+  needs.
 
-For example, the `AnyDateTimeMatcher` can be used to assert that a given date-time string matches the expected format
-without checking the actual value.
-This is useful when the actual date-time value is dynamic or not known in advance.
+  For example, the `AnyDateTimeMatcher` can be used to assert that a given date-time string matches the expected format
+  without checking the actual value.
+  This is useful when the actual date-time value is dynamic or not known in advance.
 
-the `AnyUUIDMatcher` can be used to assert that a given UUID string matches the expected format without checking the
-actual value.
+  the `AnyUUIDMatcher` can be used to assert that a given UUID string matches the expected format without checking the
+  actual value.
 
-There are some inbuilt matchers as well, such as `any-string`, `any-number`, etc.
+  There are some inbuilt matchers as well, such as `any-string`, `any-number`, etc.
 
-```json
-{
-  "id": "${json-unit.any-string}",
-  "createdAt": "${json-unit.matches:any-date-time}"
-}
+  ```json
+  {
+    "id": "${json-unit.any-string}",
+    "createdAt": "${json-unit.matches:any-date-time}"
+  }
 ```
 
 ## Time-Dependent Tests
