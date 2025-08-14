@@ -1,0 +1,64 @@
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies
+  method: PUT
+  body: {
+    "meta": {
+      "jobId": {
+        "id": "bee40e91-e09d-4cc6-ba41-6cccaf801759",
+        "createdAt": "2025-08-13T14:25:25.299603823Z"
+      }
+    },
+    "items": [
+      {
+        "id": "SKU001",
+        "nodeCode": "012",
+        "supplyType": "ATP",
+        "updateType": "ABSOLUTE",
+        "quantity": {
+          "value": -36,
+          "unitOfMeasure": "UNITS"
+        },
+        "condition": "NEW",
+        "updatedAt": "2025-08-13T10:04:12.479Z"
+
+      }
+
+    ]
+  }
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_ARRAY_ORDER
+  body: {
+    "inSyncItems": [],
+    "outOfSyncItems": [],
+    "ignoredItems": [],
+    "failedItems": [
+      {
+        "id": "SKU001",
+        "system": "PARIS_EOM",
+        "nodeCode": "012",
+        "supplyType": "ATP",
+        "condition": "NEW",
+        "updateType": "ABSOLUTE",
+        "quantity": {
+          "value": -36.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "updatedAt": "2025-08-13T10:04:12.479Z",
+        "failureReason": "Quantity cannot be negative or decimal"
+      }
+    ],
+    "nodes": [
+      "012"
+    ]
+  }
+
+meta:
+  epic: Supply service
+  feature: Supply update
+  story: Ignored items
+  severity: critical
+  description: Call v1 supply updates API to verify items ignored scenario

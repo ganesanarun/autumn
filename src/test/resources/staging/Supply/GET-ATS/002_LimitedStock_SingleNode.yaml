@@ -1,0 +1,61 @@
+arrange:
+  - name: Supply update
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body: {
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "items": [
+          {
+            "id": "MK03HDI2KN-3",
+            "nodeCode": "dacba159-9afd-4a03-9e3f-a9f1e255f414",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 2,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          }
+        ]
+      }
+    saveResponseAs: supplyUpdate
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v0/ats/MK03HDI2KN-3?countryCode=CL&businessUnit=PARIS&ignoreOutOfStock=false
+  method: GET
+
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+
+        - IGNORING_ARRAY_ORDER
+
+  body: {
+    "meta": {
+      "businessUnit": "PARIS",
+      "itemId": "MK03HDI2KN-3",
+      "countryCode": "CL"
+    },
+    "atsItems": [
+      {
+        "nodeCode": "dacba159-9afd-4a03-9e3f-a9f1e255f414",
+        "nodeId": "4aaea402-8a62-4dfc-8138-57f4fee2665e",
+        "nodeAdmin": "SELLER",
+        "condition": "NEW",
+        "nodeType": "SELLER",
+        "nodeCategory": "WAREHOUSE",
+        "stockLevel": "LIMITED_STOCK",
+        "quantity": {
+          "value": 2.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      }
+    ]
+  }

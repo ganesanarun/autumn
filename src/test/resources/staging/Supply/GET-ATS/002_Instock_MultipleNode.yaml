@@ -1,0 +1,113 @@
+arrange:
+  - name: Supply update
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body: {
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "items": [
+          {
+            "id": "153998999",
+            "nodeCode": "115",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 200,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          },
+          {
+            "id": "153998999",
+            "nodeCode": "100",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 100,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          },
+          {
+            "id": "153998999",
+            "nodeCode": "10",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 50,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          }
+        ]
+      }
+    saveResponseAs: supplyUpdate
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v0/ats/153998999?countryCode=CL&businessUnit=PARIS&ignoreOutOfStock=false
+  method: GET
+
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+
+        - IGNORING_ARRAY_ORDER
+
+  body: {
+    "meta": {
+      "businessUnit": "PARIS",
+      "itemId": "153998999",
+      "countryCode": "CL"
+    },
+    "atsItems": [
+      {
+        "nodeCode": "115",
+        "nodeId": "b71695b5-a9f9-45ac-957f-6855d7a1b7f7",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "STORE",
+        "stockLevel": "IN_STOCK",
+        "quantity": {
+          "value": 140.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      },
+      {
+        "nodeCode": "100",
+        "nodeId": "d8419be1-706b-42d7-948d-79a2b8949a4e",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "WAREHOUSE",
+        "stockLevel": "IN_STOCK",
+        "quantity": {
+          "value": 100.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      },
+      {
+        "nodeCode": "10",
+        "nodeId": "e9f2c9c6-a7b0-469a-98b4-472236e01d77",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "STORE",
+        "stockLevel": "IN_STOCK",
+        "quantity": {
+          "value": 50.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      }
+    ]
+  }
