@@ -20,8 +20,6 @@ act:
         },
         "condition": "NEW",
         "updatedAt": "2025-08-13T10:06:12.479Z"
-
-
       }
     ]
   }
@@ -55,7 +53,6 @@ asserts:
       "AUTOMATION_NODE_1"
     ]
   }
-
 meta:
   epic: Supply service
   feature: Supply update

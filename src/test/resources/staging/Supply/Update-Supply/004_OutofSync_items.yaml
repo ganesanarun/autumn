@@ -19,7 +19,6 @@ arrange:
         ]
       }
     saveResponseAs: beginFullSync
-
 act:
   url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies
   method: PUT
@@ -44,10 +43,8 @@ act:
         "updatedAt": "${generate:datetime:1minutesAgo}"
 
       }
-
     ]
   }
-
 asserts:
   status: 200
   customization:

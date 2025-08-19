@@ -1,11 +1,11 @@
-disabled: false
+disabled: true
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
-    "geoCode": "13114",
-    "itemId": "MKZJ0K3S6D-1"
+    "geoCode": "13115",
+    "itemId": "TEST_AUTOMATION_005"
   }
 asserts:
   status: 200
@@ -14,24 +14,19 @@ asserts:
       options:
         - IGNORING_EXTRA_FIELDS
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
-      "itemId": "MKZJ0K3S6D-1",
+      "itemId": "TEST_AUTOMATION_005",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "SELLER",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
           "shippingMethod": "SCHEDULED",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
-        },
-        {
-          "shippingMethod": "DATE_RANGE",
-          "shippingSubType": "HOME",
-          "shippingType": "DELIVERY"
+          "shippingSubType": "COPEC",
+          "shippingType": "COLLECT"
         }
 
 
@@ -46,8 +41,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item MKNMQ7RU8X-1 in comuna 13114
-    and check all shipping options
-schedule:
-  activeAfter: 10:00
-  activeBefore: 13:00
+  description: Fetch serviceability for item TEST_AUTOMATION_005 in comuna 13115
+    and check ONLY COLLECT shipping options (DROPSHIPPING)

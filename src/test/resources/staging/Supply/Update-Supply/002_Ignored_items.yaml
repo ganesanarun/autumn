@@ -4,25 +4,23 @@ act:
   body: {
     "meta": {
       "jobId": {
-        "id": "bee40e91-e09d-4cc6-ba41-6cccaf801759",
-        "createdAt": "2025-08-13T14:25:25.299603823Z"
+        "id": "1035781f-51b3-454e-bcf4-866653dea428",
+        "createdAt": "2025-08-14T06:45:39.724957784Z"
       }
     },
     "items": [
       {
-        "id": "SKU001",
-        "nodeCode": "012",
+        "id": "TEST_AUTOMATION_001",
+        "nodeCode": "AUTOMATION_NODE_1",
         "supplyType": "ATP",
         "updateType": "ABSOLUTE",
         "quantity": {
-          "value": -36,
+          "value": 350,
           "unitOfMeasure": "UNITS"
         },
         "condition": "NEW",
-        "updatedAt": "2025-08-13T10:04:12.479Z"
-
+        "updatedAt": "2025-08-13T10:05:12.479Z"
       }
-
     ]
   }
 asserts:
@@ -34,28 +32,27 @@ asserts:
   body: {
     "inSyncItems": [],
     "outOfSyncItems": [],
-    "ignoredItems": [],
-    "failedItems": [
+    "ignoredItems": [
       {
-        "id": "SKU001",
+        "id": "TEST_AUTOMATION_001",
         "system": "PARIS_EOM",
-        "nodeCode": "012",
+        "nodeCode": "AUTOMATION_NODE_1",
         "supplyType": "ATP",
         "condition": "NEW",
         "updateType": "ABSOLUTE",
         "quantity": {
-          "value": -36.0,
+          "value": 350.0,
           "unitOfMeasure": "UNITS"
         },
-        "updatedAt": "2025-08-13T10:04:12.479Z",
-        "failureReason": "Quantity cannot be negative or decimal"
+        "updatedAt": "2025-08-13T10:05:12.479Z",
+        "ignoredReason": "Database has the latest updated value"
       }
     ],
+    "failedItems": [],
     "nodes": [
-      "012"
+      "AUTOMATION_NODE_1"
     ]
   }
-
 meta:
   epic: Supply service
   feature: Supply update

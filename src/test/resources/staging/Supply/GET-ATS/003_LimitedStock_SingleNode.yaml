@@ -9,8 +9,8 @@ arrange:
         "countryCode": "CL",
         "items": [
           {
-            "id": "MK03HDI2KN-3",
-            "nodeCode": "dacba159-9afd-4a03-9e3f-a9f1e255f414",
+            "id": "TEST_AUTOMATION_008",
+            "nodeCode": "AUTOMATION_NODE_8",
             "supplyType": "ATP",
             "updateType": "ABSOLUTE",
             "quantity": {
@@ -22,10 +22,8 @@ arrange:
           }
         ]
       }
-    saveResponseAs: supplyUpdate
-
 act:
-  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v0/ats/MK03HDI2KN-3?countryCode=CL&businessUnit=PARIS&ignoreOutOfStock=false
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v0/ats/TEST_AUTOMATION_008?countryCode=CL&businessUnit=PARIS&ignoreOutOfStock=false
   method: GET
 
 asserts:
@@ -33,22 +31,20 @@ asserts:
   customization:
     body:
       options:
-
         - IGNORING_ARRAY_ORDER
-
   body: {
     "meta": {
       "businessUnit": "PARIS",
-      "itemId": "MK03HDI2KN-3",
+      "itemId": "TEST_AUTOMATION_008",
       "countryCode": "CL"
     },
     "atsItems": [
       {
-        "nodeCode": "dacba159-9afd-4a03-9e3f-a9f1e255f414",
-        "nodeId": "4aaea402-8a62-4dfc-8138-57f4fee2665e",
-        "nodeAdmin": "SELLER",
+        "nodeCode": "AUTOMATION_NODE_8",
+        "nodeId": "${json-unit.matches:any-uuid}",
+        "nodeAdmin": "PARIS",
         "condition": "NEW",
-        "nodeType": "SELLER",
+        "nodeType": "RETAIL",
         "nodeCategory": "WAREHOUSE",
         "stockLevel": "LIMITED_STOCK",
         "quantity": {

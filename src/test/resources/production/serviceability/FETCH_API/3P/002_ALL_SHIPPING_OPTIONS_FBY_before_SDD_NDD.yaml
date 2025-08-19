@@ -1,14 +1,10 @@
-disabled: false
-schedule:
-  activeAfter: "00:00"
-  timezone: "America/Santiago" # Optional, defaults to UTC
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
     "geoCode": "13114",
-    "itemId": "MKSLAS3G7I-1"
+    "itemId": "TEST_AUTOMATION_006"
   }
 asserts:
   status: 200
@@ -17,13 +13,13 @@ asserts:
       options:
         - IGNORING_EXTRA_FIELDS
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
-      "itemId": "MKSLAS3G7I-1",
+      "itemId": "TEST_AUTOMATION_006",
       "networkStockLevel": "IN_STOCK",
-      "serviceNodeType": "SELLER",
+      "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
         {
@@ -36,7 +32,6 @@ asserts:
           "shippingSubType": "HOME",
           "shippingType": "DELIVERY"
         },
-
         {
           "estimatedDelivery": {
             "orderBy": "${json-unit.matches:any-zoned-date-time}"
@@ -46,14 +41,28 @@ asserts:
           "shippingType": "DELIVERY"
         },
         {
+          "estimatedDelivery": {
+            "orderBy": "${json-unit.matches:any-zoned-date-time}"
+          },
+          "shippingMethod": "SAME_DAY",
+          "shippingSubType": "HOME",
+          "shippingType": "DELIVERY"
+        },
+        {
+          "shippingMethod": "SCHEDULED",
+          "shippingSubType": "IN_STORE",
+          "shippingType": "COLLECT"
+        },
+        {
           "shippingMethod": "SCHEDULED",
           "shippingSubType": "COPEC",
           "shippingType": "COLLECT"
         }
-
-
       ]
     }
+schedule:
+  activeBefore: "21:00"
+  timezone: "America/Santiago"
 meta:
   epic: Serviceability
   feature: Fetch API
@@ -63,5 +72,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item TEST_SKU_1 in comuna 13114
-    and check all shipping options
+  description: Fetch serviceability for item TEST_AUTOMATION_006 in comuna 13114
+    and check all shipping options (FULFILMENTBY) before SDD , NDD
