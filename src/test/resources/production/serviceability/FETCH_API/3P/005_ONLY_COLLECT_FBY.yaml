@@ -1,11 +1,10 @@
-disabled: true
 act:
   url: https://hd-fulfillment-global-serviceability-service.ecomm.cencosud.com/api/v1/serviceability/fetch
   method: POST
   body: {
     "geoType": "COMUNA",
-    "geoCode": "01405",
-    "itemId": "124010999"
+    "geoCode": "13116",
+    "itemId": "TEST_AUTOMATION_006"
   }
 asserts:
   status: 200
@@ -14,23 +13,24 @@ asserts:
       options:
         - IGNORING_EXTRA_FIELDS
         - IGNORING_ARRAY_ORDER
-        - IGNORING_EXTRA_ARRAY_ITEMS
+
   body:
     {
       "isServiceable": true,
-      "itemId": "124010999",
+      "itemId": "TEST_AUTOMATION_006",
       "networkStockLevel": "IN_STOCK",
       "serviceNodeType": "RETAIL",
       "serviceableStockLevel": "IN_STOCK",
       "shippingOptions": [
+
         {
           "shippingMethod": "SCHEDULED",
-          "shippingSubType": "COPEC",
+          "shippingSubType": "IN_STORE",
           "shippingType": "COLLECT"
         },
         {
           "shippingMethod": "SCHEDULED",
-          "shippingSubType": "IN_STORE",
+          "shippingSubType": "COPEC",
           "shippingType": "COLLECT"
         }
       ]
@@ -44,5 +44,5 @@ meta:
     - 1P
     - serviceability
     - fetch
-  description: Fetch serviceability for item 124010999 in comuna 13114
-    and check all shipping options
+  description: Fetch serviceability for item TEST_AUTOMATION_006 in comuna 13116
+    and check ONLY COLLECT shipping options (FULFILMENTBY)

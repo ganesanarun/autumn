@@ -1,0 +1,109 @@
+arrange:
+  - name: Supply update
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body: {
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "items": [
+          {
+            "id": "TEST_AUTOMATION_009",
+            "nodeCode": "AUTOMATION_NODE_1",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 2,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          },
+          {
+            "id": "TEST_AUTOMATION_009",
+            "nodeCode": "AUTOMATION_NODE_2",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 1,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          },
+          {
+            "id": "TEST_AUTOMATION_009",
+            "nodeCode": "AUTOMATION_NODE_3",
+            "supplyType": "ATP",
+            "updateType": "ABSOLUTE",
+            "quantity": {
+              "value": 4,
+              "unitOfMeasure": "UNITS"
+            },
+            "condition": "NEW",
+            "updatedAt": "${generate:datetime:now}"
+          }
+        ]
+      }
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v0/ats/TEST_AUTOMATION_009?countryCode=CL&businessUnit=PARIS&ignoreOutOfStock=false
+  method: GET
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_ARRAY_ORDER
+  body: {
+    "meta": {
+      "businessUnit": "PARIS",
+      "itemId": "TEST_AUTOMATION_009",
+      "countryCode": "CL"
+    },
+    "atsItems": [
+      {
+        "nodeCode": "AUTOMATION_NODE_1",
+        "nodeId": "${json-unit.matches:any-uuid}",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "WAREHOUSE",
+        "stockLevel": "LIMITED_STOCK",
+        "quantity": {
+          "value": 2.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      },
+      {
+        "nodeCode": "AUTOMATION_NODE_2",
+        "nodeId": "${json-unit.matches:any-uuid}",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "WAREHOUSE",
+        "stockLevel": "LIMITED_STOCK",
+        "quantity": {
+          "value": 1.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      },
+      {
+        "nodeCode": "AUTOMATION_NODE_3",
+        "nodeId": "${json-unit.matches:any-uuid}",
+        "nodeAdmin": "PARIS",
+        "condition": "NEW",
+        "nodeType": "RETAIL",
+        "nodeCategory": "STORE",
+        "stockLevel": "LIMITED_STOCK",
+        "quantity": {
+          "value": 4.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "lastUpdatedAt": "${json-unit.matches:any-zoned-date-time}"
+      }
+    ]
+  }
+

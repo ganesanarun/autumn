@@ -1,0 +1,61 @@
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies
+  method: PUT
+  body: {
+    "meta": {
+      "jobId": {
+        "id": "1035781f-51b3-454e-bcf4-866653dea428",
+        "createdAt": "2025-08-14T06:45:39.724957784Z"
+      }
+    },
+    "items": [
+      {
+        "id": "TEST_AUTOMATION_001",
+        "nodeCode": "AUTOMATION_NODE_1",
+        "supplyType": "ATP",
+        "updateType": "ABSOLUTE",
+        "quantity": {
+          "value": 350,
+          "unitOfMeasure": "UNITS"
+        },
+        "condition": "NEW",
+        "updatedAt": "${generate:datetime:1daysAfter}"
+      }
+    ]
+  }
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_ARRAY_ORDER
+  body: {
+    "inSyncItems": [],
+    "outOfSyncItems": [],
+    "ignoredItems": [],
+    "failedItems": [
+      {
+        "id": "TEST_AUTOMATION_001",
+        "system": "PARIS_EOM",
+        "nodeCode": "AUTOMATION_NODE_1",
+        "supplyType": "ATP",
+        "condition": "NEW",
+        "updateType": "ABSOLUTE",
+        "quantity": {
+          "value": 350.0,
+          "unitOfMeasure": "UNITS"
+        },
+        "updatedAt": "${json-unit.matches:any-zoned-date-time}",
+        "failureReason": "Source updated at time is in future"
+      }
+    ],
+    "nodes": [
+      "AUTOMATION_NODE_1"
+    ]
+  }
+meta:
+  epic: Supply service
+  feature: Supply update
+  story: Failed items
+  severity: critical
+  description: Call v1 supply updates API to verify items failing scenario
