@@ -1,0 +1,88 @@
+act:
+  url: https://hd-fulfillment-global-network-service.ecomm-stg.cencosud.com/v1/nodes/available-dispatch-processes
+  method: POST
+  body: {
+    "meta": {
+      "businessUnit": "PARIS",
+      "countryCode": "CL"
+    },
+    "by": "NODE_CODE",
+    "nodeCodes": [
+      "AUTOMATION_NODE_9"
+    ],
+    "nodeIds": []
+  }
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_ARRAY_ORDER
+  body:
+    {
+      "meta": {
+        "businessUnit": "PARIS",
+        "countryCode": "CL",
+        "date": "${json-unit.matches:any-zoned-date-time}"
+      },
+      "nodes": [
+        {
+          "nodeId": "${json-unit.matches:any-uuid}",
+          "nodeCode": "AUTOMATION_NODE_9",
+          "nodeType": "SELLER",
+          "nodeCategory": "WAREHOUSE",
+          "nodeAdmin": "SELLER",
+          "stockPriority": null,
+          "workingDays": [ ],
+          "availableDispatchProcesses": [
+            {
+              "id": "${json-unit.matches:any-uuid}",
+              "shippingCapability": "PICKUP_COPEC",
+              "logisticModel": "DROPSHIPPING",
+              "shippingType": "COLLECT",
+              "shippingSubType": "COPEC",
+              "shippingMethod": "SCHEDULED",
+              "cutOffTime": "23:59:59",
+              "shippingLeadTime": {
+                "value": 1,
+                "unitOfMeasure": "DAYS"
+              },
+              "scheduleDays": 1,
+              "bufferDays": null,
+              "priority": 1,
+              "criteria": [
+                {
+                  "type": "INCLUDE",
+                  "attribute": "SIZE",
+                  "operator": "EQUALS",
+                  "value": "SMALL",
+                  "unitOfMeasure": null
+                }
+              ],
+              "exceptions": [ ],
+              "serviceableDestinations": [ ]
+            },
+            {
+              "id": "${json-unit.matches:any-uuid}",
+              "shippingCapability": "CLICK_AND_COLLECT",
+              "logisticModel": "DROPSHIPPING",
+              "shippingType": "COLLECT",
+              "shippingSubType": "IN_STORE",
+              "shippingMethod": "SCHEDULED",
+              "cutOffTime": "23:59:59",
+              "shippingLeadTime": {
+                "value": 1,
+                "unitOfMeasure": "DAYS"
+              },
+              "scheduleDays": 1,
+              "bufferDays": null,
+              "priority": 1,
+              "criteria": [ ],
+              "exceptions": [ ],
+              "serviceableDestinations": [ ]
+            }
+          ]
+        }
+      ]
+    }
