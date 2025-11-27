@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import java.net.URI;
@@ -24,6 +25,8 @@ public class Act {
 	private String url;
 
 	private HttpMethod method;
+
+    private HttpHeaders headers;
 
 	private JsonNode body;
 

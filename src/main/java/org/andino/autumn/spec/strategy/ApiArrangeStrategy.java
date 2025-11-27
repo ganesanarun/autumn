@@ -21,7 +21,9 @@ public record ApiArrangeStrategy(HttpRequestExecutor executor) implements Arrang
 			JsonNode resolvedBody = PlaceHolderResolver.resolve(step.getAct().getBody(), context);
 			LOGGER.debug("Resolved Body: {} with context {}", resolvedBody, context);
 			var headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+			if(step.getAct() != null && step.getAct().getHeaders() != null){
+				headers.addAll(step.getAct().getHeaders());
+			}
 			var response = executor.execute(step.getAct().withBody(resolvedBody), headers);
 			if (step.getSaveResponseAs() != null && !step.getSaveResponseAs().isBlank()) {
 				context.put(step.getSaveResponseAs(), response.getResponseBody());

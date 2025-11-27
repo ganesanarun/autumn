@@ -18,8 +18,7 @@ public class HttpRequestExecutor {
 
 	public Response execute(TestCase testCase) {
 		log.debug("Making a call for {}", testCase.getAct());
-		final var httpHeaders = new HttpHeaders();
-		return invoke(testCase.getAct(), httpHeaders);
+		return invoke(testCase.getAct(), testCase.getAct().getHeaders());
 	}
 
 	public Response execute(Act act, MultiValueMap<String, String> headers) {
@@ -28,11 +27,16 @@ public class HttpRequestExecutor {
 	}
 
 	private Response invoke(Act request, MultiValueMap<String, String> headers) {
-		final var response = restClient.method(request.getMethod())
-			.uri(request.getUri())
-			.body(request.getBody())
-			.retrieve()
-			.toEntity(JsonNode.class);
+		final var response = restClient
+				.method(request.getMethod())
+				.uri(request.getUri())
+				.body(request.getBody())
+				.headers(httpHeaders -> {
+					if (headers != null && !headers.isEmpty()) {
+						httpHeaders.addAll(headers);
+					}
+				}).retrieve()
+				.toEntity(JsonNode.class);
 		return new Response(response.getStatusCode(), response.getBody(), response.getHeaders());
 	}
 
