@@ -1,0 +1,73 @@
+arrange:
+  - name: Add Stock for Item + Node
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body:
+        businessUnit: PARIS
+        countryCode: CL
+        items:
+          - id: test-sku-001
+            nodeCode: test_node
+            supplyType: ATP
+            updateType: ABSOLUTE
+            quantity:
+              value: 100
+              unitOfMeasure: UNITS
+            condition: NEW
+            updatedAt: "${generate:datetime:now}"
+    saveResponseAs: stock
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands
+  method: POST
+  headers:
+    X-Business-Unit:
+      - PARIS
+    X-Country-Code:
+      - CL
+  body:
+    meta:
+      referenceId: "${generate:string}"
+      orderId: "${generate:string}"
+      orderType: CUSTOMER_ORDER
+      expiryInMilliseconds: 120000
+      channel: MOBILE
+      geoCode: "13114"
+      geoType: COMUNA
+    reservations:
+      - itemId: "${stock.successfulItems[0].id}"
+        condition: "${stock.successfulItems[0].condition}"
+        promiseDeliveryDate: "${generate:datetime:tomorrow}"
+        quantity:
+          value: 1
+          unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
+        nodeCode: "${stock.successfulItems[0].nodeCode}"
+        riskLevel: LOW
+        orderLineId: "1"
+        sellerType: 3P
+        logisticSize: SMALL
+        shipping:
+          type: DELIVERY
+          subType: HOME
+          method: NEXT_DAY
+asserts:
+  status: 200
+  customization:
+  body:
+    meta:
+      referenceId: "defaultString"
+      orderId: "defaultString"
+      demandId: "${json-unit.matches:any-uuid}"
+      geoCode: "13114"
+      geoType: COMUNA
+    reservations:
+      - itemId: "test-sku-001"
+        condition: "NEW"
+        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
+        nodeCode: "test_node"
+        status: "RESERVED"
+        demandItemId: "${json-unit.matches:any-uuid}"
+        orderLineId: "1"
+        expiryTime: "${json-unit.matches:any-zoned-date-time}"

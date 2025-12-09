@@ -1,0 +1,92 @@
+arrange:
+  - name: Add Stock for Item + Node
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body:
+        businessUnit: PARIS
+        countryCode: CL
+        items:
+          - id: sku-002
+            nodeCode: test-node
+            supplyType: ATP
+            updateType: ABSOLUTE
+            quantity:
+              value: 999
+              unitOfMeasure: UNITS
+            condition: NEW
+            updatedAt: "${generate:datetime:now}"
+    saveResponseAs: stock
+
+  - name: Reserve Demand (Single Item + Node)
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands
+      method: POST
+      headers:
+        X-Business-Unit:
+          - PARIS
+        X-Country-Code:
+          - CL
+      body:
+        meta:
+          referenceId: "${generate:string}"
+          orderId: "${generate:string}"
+          orderType: CUSTOMER_ORDER
+          expiryInMilliseconds: 120000
+          channel: MOBILE
+          geoCode: "13114"
+          geoType: COMUNA
+        reservations:
+          - itemId: sku-002
+            condition: NEW
+            promiseDeliveryDate: "${generate:datetime:tomorrow}"
+            quantity:
+              value: 1
+              unitOfMeasure: UNITS
+            nodeCode: test-node
+            riskLevel: LOW
+            orderLineId: "1"
+            sellerType: 1P
+            logisticSize: SMALL
+            shipping:
+              type: DELIVERY
+              subType: HOME
+              method: NEXT_DAY
+    saveResponseAs: reservedDemand
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands/allocate
+  method: PUT
+  headers:
+    X-Business-Unit:
+      - PARIS
+    X-Country-Code:
+      - CL
+  body:
+    id: "${reservedDemand.meta.referenceId}"
+    type: "REFERENCE"
+
+asserts:
+  status: 200
+  body:
+    meta:
+      referenceId: "${reservedDemand.meta.referenceId}"
+      orderId: "${reservedDemand.meta.orderId}"
+      demandId: "${reservedDemand.meta.demandId}"
+
+    allocations:
+      - itemId: "sku-002"
+        condition: "NEW"
+        nodeCode: "test-node"
+        demandItemId: "${reservedDemand.reservations[0].demandItemId}"
+        orderLineId: "${reservedDemand.reservations[0].orderLineId}"
+        status: "ALLOCATED"
+        expiryTime: "${json-unit.matches:any-zoned-date-time}"
+
+
+
+
+
+
