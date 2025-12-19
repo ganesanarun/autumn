@@ -78,10 +78,47 @@ datetime supports following chrono units:
 > In the future, the framework will be extended to support more data generation options, such as generating random
 > numbers, dates, and other types of data.
 
+## Arrange Steps and Waits
+
+The framework supports an `arrange` section in each test YAML, allowing you to set up preconditions for your test, such as preparing data or making prerequisite API calls. Arrange steps are executed in order before the main `act` step.
+
+### How Arrange Steps Work
+- Each arrange step is handled by a strategy based on its `type`.
+- The most common arrange step is `type: api`, which executes an API call to set up test data or state.
+- To introduce a wait between steps, use an explicit wait step with `type: wait` and specify `waitMillis` (duration in milliseconds).
+- The `wait` type is handled by a dedicated WaitStrategy, which performs the pause.
+- This design is extensible and keeps your test YAMLs clear and maintainable.
+
+### Example YAML
+```yaml
+arrange:
+  - name: "Create Resource A"
+    type: api
+    act:
+      url: "/api/resources"
+      method: POST
+      body: { "name": "Resource A" }
+    saveResponseAs: resourceA
+  - name: "Wait for 2 seconds"
+    type: wait
+    waitMillis: 2000
+  - name: "Create Resource B"
+    type: api
+    act:
+      url: "/api/resources"
+      method: POST
+      body: { "name": "Resource B" }
+```
+- The `wait` step pauses for 2 seconds before the next step.
+
+### Supported Arrange Step Types
+- **api**: Executes an API call to set up test data or state.
+- **wait**: Pauses execution for a specified duration (in milliseconds) before proceeding to the next step.
+
 ## Referring responses from previous steps in request body
-The framework allows referring to responses from previous steps in the request body. This is useful for chaining
-requests together, where the output of one request is used as input for another.
-For example, if you have a test case that creates a resource and then retrieves it, you can refer to the ID of the
+The framework allows referring to responses from previous arrange steps in the request body. This is useful for chaining
+requests together, where the output of one arrange step is used as input for another or for the main act step.
+For example, if you have a test case that creates a resource and then retrieves or updates it, you can refer to the ID of the
 created resource in the subsequent request.
 ```yaml
 arrange:
@@ -94,7 +131,7 @@ arrange:
         "name": "Resource A",
         "createdAt": "${generate:datetime}"
       }
-      saveResponseAs: resourceA
+    saveResponseAs: resourceA
 act:
   url: "/api/resources"
   method: PUT
@@ -155,6 +192,7 @@ schedule:
   timezone: "America/Santiago" # Optional, defaults to UTC
 ```
 
+
 ## Build Configuration
 
 The build configuration is defined in the `build.gradle` file. The project uses the Spring Boot Gradle plugin, the
@@ -209,11 +247,30 @@ html report will be generated in `build/reports/tests/test/index.html`
 
 ## Future Enhancements
 
-In the future, the Autumn framework will be extended to support calling multiple APIs either sequentially or in
-parallel. This will involve extending the TestCase class to support multiple Act and Assert instances, modifying the
-HttpRequestExecutor class to execute multiple HTTP requests, and updating the test execution and assertion logic to
-handle multiple test cases and responses. This enhancement will allow QA teams to define complex test scenarios
-involving multiple API calls and assert the results in a flexible and efficient manner
+The Autumn framework already supports many advanced features, such as sequential multi-API scenarios via the `arrange` section, response chaining, and explicit waits. Below are areas for future expansion and clarification of what is already possible:
+
+### Already Supported
+- **Sequential API Calls:** Multiple API calls can be defined in the `arrange` section and are executed in order.
+- **Response Chaining:** You can use `saveResponseAs` and reference previous responses in subsequent arrange steps or the main `act`.
+- **Explicit Waits:** Use `type: wait` in arrange steps to introduce delays between actions.
+
+### Potential Enhancements
+- **Parallel API Calls:**
+  - *Not yet implemented.* Support for executing arrange steps (or acts) in parallel could be added. This would allow simulation of concurrent workflows or requests.
+  - *Possible YAML syntax:*
+    ```yaml
+    arrange:
+      - type: parallel
+        steps:
+          - type: api
+            act: ...
+          - type: api
+            act: ...
+    ```
+- **Enhanced Reporting:**
+  - *Expansion opportunity.* As tests become more complex, step-level and parallel execution reporting could be improved in HTML and Allure reports.
+
+These enhancements would further increase the flexibility and power of the Autumn framework, enabling even more advanced API automation scenarios.
 
 ## Conclusion
 

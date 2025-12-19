@@ -5,6 +5,7 @@ import org.andino.autumn.spec.ArrangeStep;
 import org.andino.autumn.spec.strategy.ApiArrangeStrategy;
 import org.andino.autumn.spec.strategy.ArrangeStrategy;
 import org.andino.autumn.spec.strategy.DefaultStrategy;
+import org.andino.autumn.spec.strategy.WaitStrategy;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class ArrangeExecutor {
 	private ArrangeStrategy findExecutor(String type) {
 		return switch (type) {
 			case "api" -> new ApiArrangeStrategy(new HttpRequestExecutor(RestClient.create()));
+			case "wait" -> new WaitStrategy();
 			default -> new DefaultStrategy();
 		};
 	}

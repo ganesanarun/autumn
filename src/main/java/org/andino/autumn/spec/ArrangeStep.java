@@ -21,4 +21,6 @@ public class ArrangeStep {
 
 	private String saveResponseAs;
 
+	private Long waitMillis;
+
 }

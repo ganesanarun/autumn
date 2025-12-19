@@ -26,7 +26,7 @@ public class Act {
 
 	private HttpMethod method;
 
-    private HttpHeaders headers;
+	private HttpHeaders headers;
 
 	private JsonNode body;
 
