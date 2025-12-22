@@ -1,5 +1,5 @@
 arrange:
-  - name: Add Stock for multi line Items + same Node code
+  - name: Add Stock for Item + Node
     type: api
     act:
       url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
@@ -8,21 +8,12 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: test_1
-            nodeCode: test_node
+          - id: TEST_AUTOMATION_14
+            nodeCode: AUTOMATION_NODE_1
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 10
-              unitOfMeasure: UNITS
-            condition: NEW
-            updatedAt: "${generate:datetime:now}"
-          - id: test_2
-            nodeCode: test_node
-            supplyType: ATP
-            updateType: ABSOLUTE
-            quantity:
-              value: 10
+              value: 200
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
@@ -53,31 +44,14 @@ act:
           value: 1
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
-        riskLevel: HIGH
-        orderLineId: "3"
+        riskLevel: LOW
+        orderLineId: "1"
         sellerType: 1P
         logisticSize: SMALL
         shipping:
           type: DELIVERY
           subType: HOME
           method: NEXT_DAY
-      - itemId: "${stock.successfulItems[1].id}"
-        condition: "${stock.successfulItems[1].condition}"
-        promiseDeliveryDate: "${generate:datetime:tomorrow}"
-        quantity:
-          value: 1
-          unitOfMeasure: "${stock.successfulItems[1].quantity.unitOfMeasure}"
-        nodeCode: "${stock.successfulItems[1].nodeCode}"
-        riskLevel: HIGH
-        orderLineId: "4"
-        sellerType: 1P
-        logisticSize: SMALL
-        shipping:
-          type: DELIVERY
-          subType: HOME
-          method: NEXT_DAY
-
-
 asserts:
   status: 200
   customization:
@@ -89,21 +63,11 @@ asserts:
       geoCode: "13114"
       geoType: COMUNA
     reservations:
-      - itemId: "test_1"
+      - itemId: "TEST_AUTOMATION_14"
         condition: "NEW"
         promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
+        nodeCode: "AUTOMATION_NODE_1"
         status: "RESERVED"
         demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "3"
+        orderLineId: "1"
         expiryTime: "${json-unit.matches:any-zoned-date-time}"
-      - itemId: "test_2"
-        condition: "NEW"
-        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
-        status: "RESERVED"
-        demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "4"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
-
-

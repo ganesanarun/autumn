@@ -8,7 +8,7 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: sku-002
+          - id: TEST_AUTOMATION_21
             nodeCode: test-node
             supplyType: ATP
             updateType: ABSOLUTE
@@ -31,15 +31,15 @@ arrange:
           - CL
       body:
         meta:
-          referenceId: "${generate:string}"
-          orderId: "${generate:string}"
+          referenceId: "${generate:string:uuid}"
+          orderId: "${generate:string:uuid}"
           orderType: CUSTOMER_ORDER
-          expiryInMilliseconds: 120000
+          expiryInMilliseconds: 2000
           channel: MOBILE
           geoCode: "13114"
           geoType: COMUNA
         reservations:
-          - itemId: sku-002
+          - itemId: TEST_AUTOMATION_21
             condition: NEW
             promiseDeliveryDate: "${generate:datetime:tomorrow}"
             quantity:
@@ -54,7 +54,11 @@ arrange:
               type: DELIVERY
               subType: HOME
               method: NEXT_DAY
-    saveResponseAs: reservedDemand
+    saveResponseAs: DemandReservation
+
+  - name: Wait for 2 seconds
+    type: wait
+    waitMillis: 60000
 
 act:
   url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands/allocate
@@ -65,28 +69,16 @@ act:
     X-Country-Code:
       - CL
   body:
-    id: "${reservedDemand.meta.referenceId}"
+    id: "${DemandReservation.meta.referenceId}"
     type: "REFERENCE"
 
 asserts:
-  status: 200
+  status: 422
+  customization:
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
   body:
-    meta:
-      referenceId: "${reservedDemand.meta.referenceId}"
-      orderId: "${reservedDemand.meta.orderId}"
-      demandId: "${reservedDemand.meta.demandId}"
-
-    allocations:
-      - itemId: "sku-002"
-        condition: "NEW"
-        nodeCode: "test-node"
-        demandItemId: "${reservedDemand.reservations[0].demandItemId}"
-        orderLineId: "${reservedDemand.reservations[0].orderLineId}"
-        status: "ALLOCATED"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
-
-
-
-
-
-
+    status: 422
+    errors:
+      - code: DEMAND_IS_IN_INVALID_STATUS

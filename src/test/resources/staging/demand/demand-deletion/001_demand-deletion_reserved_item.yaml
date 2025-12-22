@@ -1,0 +1,79 @@
+arrange:
+
+  - name: Add Stock for Item + Node
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
+      method: PUT
+      body:
+        businessUnit: PARIS
+        countryCode: CL
+        items:
+          - id: TEST_AUTOMATION_23
+            nodeCode: test-node
+            supplyType: ATP
+            updateType: ABSOLUTE
+            quantity:
+              value: 999
+              unitOfMeasure: UNITS
+            condition: NEW
+            updatedAt: "${generate:datetime:now}"
+    saveResponseAs: stock
+
+  - name: Reserve Demand (Single Item + Node)
+    type: api
+    act:
+      url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands
+      method: POST
+      headers:
+        X-Business-Unit:
+          - PARIS
+        X-Country-Code:
+          - CL
+      body:
+        meta:
+          referenceId: "${generate:string:uuid}"
+          orderId: "${generate:string:uuid}"
+          orderType: CUSTOMER_ORDER
+          expiryInMilliseconds: 120000
+          channel: MOBILE
+          geoCode: "13114"
+          geoType: COMUNA
+        reservations:
+          - itemId: sku-003
+            condition: NEW
+            promiseDeliveryDate: "${generate:datetime:tomorrow}"
+            quantity:
+              value: 1
+              unitOfMeasure: UNITS
+            nodeCode: test-node
+            riskLevel: LOW
+            orderLineId: "1"
+            sellerType: 1P
+            logisticSize: SMALL
+            shipping:
+              type: DELIVERY
+              subType: HOME
+              method: NEXT_DAY
+    saveResponseAs: reservedDemand
+
+act:
+  url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/demands
+  method: DELETE
+  headers:
+    X-Business-Unit:
+      - PARIS
+    X-Country-Code:
+      - CL
+  body:
+    id: "${reservedDemand.meta.referenceId}"
+    type: "REFERENCE"
+
+asserts:
+  status: 200
+  customization:
+    body:
+      options:
+        - IGNORING_VALUES
+        - IGNORING_EXTRA_FIELDS
+  body: {}

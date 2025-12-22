@@ -8,7 +8,7 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: TEST_AUTOMATION_10
+          - id: TEST_AUTOMATION_15
             nodeCode: AUTOMATION_NODE_1
             supplyType: ATP
             updateType: ABSOLUTE
@@ -46,13 +46,12 @@ act:
         nodeCode: "${stock.successfulItems[0].nodeCode}"
         riskLevel: LOW
         orderLineId: "1"
-        sellerType: 1P
+        sellerType: 3P
         logisticSize: SMALL
         shipping:
           type: DELIVERY
           subType: HOME
           method: NEXT_DAY
-
 asserts:
   status: 200
   customization:
@@ -64,7 +63,7 @@ asserts:
       geoCode: "13114"
       geoType: COMUNA
     reservations:
-      - itemId: "TEST_AUTOMATION_10"
+      - itemId: "TEST_AUTOMATION_15"
         condition: "NEW"
         promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
         nodeCode: "AUTOMATION_NODE_1"

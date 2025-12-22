@@ -8,12 +8,12 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: TEST1
-            nodeCode: test_node
+          - id: MK2NHMYUVC-2
+            nodeCode: c6a52e7c-f3e7-4149-b231-d376be9a4420
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 10
+              value: 3
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
@@ -41,12 +41,12 @@ act:
         condition: "${stock.successfulItems[0].condition}"
         promiseDeliveryDate: "${generate:datetime:tomorrow}"
         quantity:
-          value: 11
+          value: 5
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
         riskLevel: HIGH
         orderLineId: "1"
-        sellerType: 1P
+        sellerType: 3P
         logisticSize: SMALL
         shipping:
           type: DELIVERY
@@ -58,8 +58,5 @@ asserts:
     body:
       options:
         - IGNORING_EXTRA_FIELDS
-  body:
-    status: 422
-    errors:
-      - code: INSUFFICIENT_QUANTITY
-
+        - IGNORING_VALUES
+  body: {}

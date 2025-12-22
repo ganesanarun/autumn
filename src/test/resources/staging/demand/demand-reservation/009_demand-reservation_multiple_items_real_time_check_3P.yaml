@@ -1,5 +1,5 @@
 arrange:
-  - name: Add Stock for multi line items +  same Node code
+  - name: Add Stock for multi line Items + same Node code
     type: api
     act:
       url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
@@ -8,21 +8,21 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: test001
-            nodeCode: test_node
+          - id: MKR8VRTKT1-1
+            nodeCode: a1ec1668-f67c-4089-905b-f906ee22db76
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 200
+              value: 2
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
-          - id: test2
-            nodeCode: test_node
+          - id: MK2NHMYUVC-2
+            nodeCode: c6a52e7c-f3e7-4149-b231-d376be9a4420
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 200
+              value: 2
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
@@ -50,12 +50,12 @@ act:
         condition: "${stock.successfulItems[0].condition}"
         promiseDeliveryDate: "${generate:datetime:tomorrow}"
         quantity:
-          value: 1
+          value: 10
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
-        riskLevel: LOW
+        riskLevel: HIGH
         orderLineId: "3"
-        sellerType: 1P
+        sellerType: 3P
         logisticSize: SMALL
         shipping:
           type: DELIVERY
@@ -68,7 +68,7 @@ act:
           value: 10
           unitOfMeasure: "${stock.successfulItems[1].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[1].nodeCode}"
-        riskLevel: LOW
+        riskLevel: HIGH
         orderLineId: "4"
         sellerType: 3P
         logisticSize: SMALL
@@ -79,31 +79,10 @@ act:
 
 
 asserts:
-  status: 200
+  status: 422
   customization:
-  body:
-    meta:
-      referenceId: "defaultString"
-      orderId: "defaultString"
-      demandId: "${json-unit.matches:any-uuid}"
-      geoCode: "13114"
-      geoType: COMUNA
-    reservations:
-      - itemId: "test001"
-        condition: "NEW"
-        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
-        status: "RESERVED"
-        demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "3"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
-      - itemId: "test2"
-        condition: "NEW"
-        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
-        status: "RESERVED"
-        demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "4"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
-
-
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_VALUES
+  body: {}

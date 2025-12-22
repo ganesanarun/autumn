@@ -1,5 +1,5 @@
 arrange:
-  - name: Add Stock for Item + Node
+  - name: Add Stock for multi line Items + same Node code
     type: api
     act:
       url: https://hd-fulfillment-global-supply-demand-service.ecomm-stg.cencosud.com/v1/supplies/update
@@ -8,12 +8,21 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: test-sku-001
-            nodeCode: test_node
+          - id: 137851999
+            nodeCode: 200
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 100
+              value: 1
+              unitOfMeasure: UNITS
+            condition: NEW
+            updatedAt: "${generate:datetime:now}"
+          - id: 242146999
+            nodeCode: 115
+            supplyType: ATP
+            updateType: ABSOLUTE
+            quantity:
+              value: 1
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
@@ -41,33 +50,42 @@ act:
         condition: "${stock.successfulItems[0].condition}"
         promiseDeliveryDate: "${generate:datetime:tomorrow}"
         quantity:
-          value: 1
+          value: 9
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
-        riskLevel: LOW
-        orderLineId: "1"
-        sellerType: 3P
+        riskLevel: HIGH
+        orderLineId: "3"
+        sellerType: 1P
         logisticSize: SMALL
         shipping:
           type: DELIVERY
           subType: HOME
           method: NEXT_DAY
+      - itemId: "${stock.successfulItems[1].id}"
+        condition: "${stock.successfulItems[1].condition}"
+        promiseDeliveryDate: "${generate:datetime:tomorrow}"
+        quantity:
+          value: 2
+          unitOfMeasure: "${stock.successfulItems[1].quantity.unitOfMeasure}"
+        nodeCode: "${stock.successfulItems[1].nodeCode}"
+        riskLevel: HIGH
+        orderLineId: "4"
+        sellerType: 1P
+        logisticSize: SMALL
+        shipping:
+          type: DELIVERY
+          subType: HOME
+          method: NEXT_DAY
+
+
 asserts:
-  status: 200
+  status: 422
   customization:
-  body:
-    meta:
-      referenceId: "defaultString"
-      orderId: "defaultString"
-      demandId: "${json-unit.matches:any-uuid}"
-      geoCode: "13114"
-      geoType: COMUNA
-    reservations:
-      - itemId: "test-sku-001"
-        condition: "NEW"
-        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
-        status: "RESERVED"
-        demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "1"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_VALUES
+  body: {}
+
+
+

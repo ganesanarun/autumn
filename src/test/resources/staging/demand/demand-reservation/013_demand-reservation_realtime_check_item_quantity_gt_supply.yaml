@@ -8,8 +8,8 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: TEST1
-            nodeCode: test_node
+          - id: 137851999
+            nodeCode: 200
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
@@ -41,7 +41,7 @@ act:
         condition: "${stock.successfulItems[0].condition}"
         promiseDeliveryDate: "${generate:datetime:tomorrow}"
         quantity:
-          value: 1
+          value: 2000
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
         riskLevel: HIGH
@@ -53,21 +53,11 @@ act:
           subType: HOME
           method: NEXT_DAY
 asserts:
-  status: 200
+  status: 422
   customization:
-  body:
-    meta:
-      referenceId: "defaultString"
-      orderId: "defaultString"
-      demandId: "${json-unit.matches:any-uuid}"
-      geoCode: "13114"
-      geoType: COMUNA
-    reservations:
-      - itemId: "TEST1"
-        condition: "NEW"
-        promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
-        status: "RESERVED"
-        demandItemId: "${json-unit.matches:any-uuid}"
-        orderLineId: "1"
-        expiryTime: "${json-unit.matches:any-zoned-date-time}"
+    body:
+      options:
+        - IGNORING_EXTRA_FIELDS
+        - IGNORING_VALUES
+  body: {}
+

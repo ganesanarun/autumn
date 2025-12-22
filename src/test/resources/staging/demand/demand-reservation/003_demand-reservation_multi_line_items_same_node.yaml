@@ -8,21 +8,21 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: test_001
-            nodeCode: test_node
+          - id: TEST_AUTOMATION_12
+            nodeCode: AUTOMATION_NODE_1
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 200
+              value: 999
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
-          - id: test_002
-            nodeCode: test_node
+          - id: TEST_AUTOMATION_13
+            nodeCode: AUTOMATION_NODE_1
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
-              value: 200
+              value: 999
               unitOfMeasure: UNITS
             condition: NEW
             updatedAt: "${generate:datetime:now}"
@@ -89,18 +89,18 @@ asserts:
       geoCode: "13114"
       geoType: COMUNA
     reservations:
-      - itemId: "test_001"
+      - itemId: "TEST_AUTOMATION_12"
         condition: "NEW"
         promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
+        nodeCode: "AUTOMATION_NODE_1"
         status: "RESERVED"
         demandItemId: "${json-unit.matches:any-uuid}"
         orderLineId: "3"
         expiryTime: "${json-unit.matches:any-zoned-date-time}"
-      - itemId: "test_002"
+      - itemId: "TEST_AUTOMATION_13"
         condition: "NEW"
         promiseDeliveryDate: "${json-unit.matches:any-zoned-date-time}"
-        nodeCode: "test_node"
+        nodeCode: "AUTOMATION_NODE_1"
         status: "RESERVED"
         demandItemId: "${json-unit.matches:any-uuid}"
         orderLineId: "4"

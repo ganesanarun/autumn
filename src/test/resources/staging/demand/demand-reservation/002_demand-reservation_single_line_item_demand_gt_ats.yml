@@ -8,8 +8,8 @@ arrange:
         businessUnit: PARIS
         countryCode: CL
         items:
-          - id: test-sku-001
-            nodeCode: test_node
+          - id: TEST_AUTOMATION_11
+            nodeCode: AUTOMATION_NODE_1
             supplyType: ATP
             updateType: ABSOLUTE
             quantity:
@@ -41,7 +41,7 @@ act:
         condition: "${stock.successfulItems[0].condition}"
         promiseDeliveryDate: "${generate:datetime:tomorrow}"
         quantity:
-          value: 15
+          value: 11
           unitOfMeasure: "${stock.successfulItems[0].quantity.unitOfMeasure}"
         nodeCode: "${stock.successfulItems[0].nodeCode}"
         riskLevel: LOW
@@ -62,7 +62,7 @@ asserts:
   body:
     status: 422
     errors:
-      - code: OUT_OF_STOCK
+      - code: INSUFFICIENT_QUANTITY
 
 
 
