@@ -37,7 +37,7 @@ public class TestCase {
 
 	private Meta meta;
 
-	private TimeWindow schedule;
+	private Schedule schedule;
 
 	public JsonAssert assertThis(JsonNode actual) {
 		return asserts.assertBody(actual);
@@ -48,11 +48,14 @@ public class TestCase {
 	}
 
 	public String getDisabledReason() {
-		if (isOutsideScheduledTime()) {
-			return "Test is outside of the execution window: " + schedule.getActiveAfter() + " - "
-					+ schedule.getActiveBefore();
+		if (isOutsideApplicableDays()) {
+			return "Test is outside of the applicable days: %s".formatted(schedule.getApplicableDays());
 		}
 
+		if (isOutsideScheduledTime()) {
+			return "Test is outside of the execution window: %s - %s"
+				.formatted(schedule.getTimeWindow().getActiveAfter(), schedule.getTimeWindow().getActiveBefore());
+		}
 		return StringUtils.hasText(disabledReason) ? disabledReason : "Test is disabled in YAML configuration";
 	}
 
@@ -110,8 +113,12 @@ public class TestCase {
 		return schedule != null && schedule.isOutsideExecutionWindow();
 	}
 
+	public boolean isOutsideApplicableDays() {
+		return schedule != null && schedule.isOutsideApplicableDays();
+	}
+
 	public boolean shouldBeSkipped() {
-		return isDisabled() || isOutsideScheduledTime();
+		return isDisabled() || isOutsideApplicableDays() || isOutsideScheduledTime();
 	}
 
 	public void setContext(Map<String, JsonNode> context) {
