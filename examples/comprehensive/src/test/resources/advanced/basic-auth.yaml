@@ -1,0 +1,31 @@
+# Basic Authentication Example
+# Demonstrates HTTP Basic Authentication
+
+act:
+  url: https://httpbin.org/basic-auth/testuser/testpass
+  method: GET
+  headers:
+    Accept:
+      - application/json
+    Authorization:
+      - Basic dGVzdHVzZXI6dGVzdHBhc3M=
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json
+  body:
+    authenticated: true
+    user: "testuser"
+
+meta:
+  epic: Advanced Features
+  feature: Authentication
+  story: Basic Authentication
+  severity: normal
+  tags:
+    - authentication
+    - basic-auth
+    - credentials
+  description: Demonstrates HTTP Basic Authentication with username and password

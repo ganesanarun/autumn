@@ -1,0 +1,58 @@
+# Staging Environment Example
+# Demonstrates environment-specific configuration usage
+
+act:
+  url: ${api.base-url.staging}/users/1
+  method: GET
+  headers:
+    Accept:
+      - application/json
+    User-Agent:
+      - Autumn-Framework-Staging-Test
+    X-Environment:
+      - staging
+    X-Test-User:
+      - ${test.data.user.default-email}
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body:
+    id: 1
+    name: "Leanne Graham"
+    username: "Bret"
+    email: "Sincere@april.biz"
+    address:
+      street: "Kulas Light"
+      suite: "Apt. 556"
+      city: "Gwenborough"
+      zipcode: "92998-3874"
+      geo:
+        lat: "-37.3159"
+        lng: "81.1496"
+    phone: "1-770-736-8031 x56442"
+    website: "hildegard.org"
+    company:
+      name: "Romaguera-Crona"
+      catchPhrase: "Multi-layered client-server neural-net"
+      bs: "harness real-time e-markets"
+
+schedule:
+  # Run only during business hours in staging
+  activeBetween: "09:00-17:00"
+  timezone: "America/New_York"
+  # Skip on weekends in staging
+  skipOnWeekends: true
+
+meta:
+  epic: Environment Configuration
+  feature: Staging Environment
+  story: Environment-Specific API Testing
+  severity: normal
+  tags:
+    - environment-staging
+    - configuration
+    - property-substitution
+  description: Demonstrates using environment-specific configuration properties and scheduling for staging environment testing

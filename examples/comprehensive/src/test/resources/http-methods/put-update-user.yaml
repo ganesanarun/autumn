@@ -1,0 +1,66 @@
+# PUT Request Example
+# Demonstrates updating an existing resource with complete replacement
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/1
+  method: PUT
+  headers:
+    Content-Type:
+      - application/json
+    Accept:
+      - application/json
+  body:
+    id: 1
+    name: "Updated User Name"
+    username: "updateduser"
+    email: "updated.user@example.com"
+    address:
+      street: "456 Updated St"
+      suite: "Suite 2"
+      city: "Updated City"
+      zipcode: "54321"
+      geo:
+        lat: "41.8781"
+        lng: "-87.6298"
+    phone: "555-987-6543"
+    website: "updateduser.com"
+    company:
+      name: "Updated Company"
+      catchPhrase: "Updated catchphrase"
+      bs: "updated business solutions"
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body:
+    id: 1
+    name: "Updated User Name"
+    username: "updateduser"
+    email: "updated.user@example.com"
+    address:
+      street: "456 Updated St"
+      suite: "Suite 2"
+      city: "Updated City"
+      zipcode: "54321"
+      geo:
+        lat: "41.8781"
+        lng: "-87.6298"
+    phone: "555-987-6543"
+    website: "updateduser.com"
+    company:
+      name: "Updated Company"
+      catchPhrase: "Updated catchphrase"
+      bs: "updated business solutions"
+
+meta:
+  epic: HTTP Methods
+  feature: PUT Requests
+  story: Update Existing User
+  severity: normal
+  tags:
+    - http-put
+    - user-update
+    - full-replacement
+  description: Demonstrates PUT request to completely update an existing user resource

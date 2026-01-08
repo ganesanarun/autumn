@@ -1,0 +1,77 @@
+# Request Validation Example
+# Demonstrates various request validation scenarios including headers, body, and query parameters
+
+act:
+  url: https://httpbin.org/post?param1=value1&param2=value2&filter=active
+  method: POST
+  headers:
+    Content-Type:
+      - application/json
+    Accept:
+      - application/json
+    Authorization:
+      - Bearer test-token
+    X-Custom-Header:
+      - custom-value
+  body:
+    user:
+      id: 123
+      name: "Test User"
+      email: "test@example.com"
+      active: true
+      roles: ["user", "admin"]
+      metadata:
+        created: "2024-01-01T00:00:00Z"
+        lastLogin: null
+    settings:
+      theme: "dark"
+      notifications: true
+      language: "en"
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json
+  body:
+    # httpbin.org echoes back the request data
+    headers:
+      Accept:
+        - application/json
+      Authorization:
+        - Bearer test-token
+      Content-Type:
+        - application/json
+      X-Custom-Header:
+        - custom-value
+    args:
+      param1: value1
+      param2: value2
+      filter: active
+    json:
+      user:
+        id: 123
+        name: "Test User"
+        email: "test@example.com"
+        active: true
+        roles: ["user", "admin"]
+        metadata:
+          created: "2024-01-01T00:00:00Z"
+          lastLogin: null
+      settings:
+        theme: "dark"
+        notifications: true
+        language: "en"
+    url: "https://httpbin.org/post?param1=value1&param2=value2&filter=active"
+
+meta:
+  epic: Validation
+  feature: Request Validation
+  story: Comprehensive Request Validation
+  severity: normal
+  tags:
+    - request-validation
+    - headers
+    - query-params
+    - request-body
+  description: Demonstrates comprehensive request validation including headers, query parameters, and complex JSON body structure

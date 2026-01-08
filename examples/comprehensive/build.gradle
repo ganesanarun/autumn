@@ -45,7 +45,7 @@ tasks.named('test') {
 
     // Pass environment parameter
     systemProperties project.properties.subMap(["env"])
-    
+
     // Generate Allure report after test execution completes
     finalizedBy 'allureReport'
 }

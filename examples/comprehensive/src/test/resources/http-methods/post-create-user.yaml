@@ -1,0 +1,57 @@
+# POST Request Example
+# Demonstrates creating a new resource with request body
+
+act:
+  url: https://jsonplaceholder.typicode.com/users
+  method: POST
+  body:
+    name: "John Doe"
+    username: "johndoe"
+    email: "john.doe@example.com"
+    address:
+      street: "123 Main St"
+      suite: "Apt 1"
+      city: "Anytown"
+      zipcode: "12345"
+      geo:
+        lat: "40.7128"
+        lng: "-74.0060"
+    phone: "555-123-4567"
+    website: "johndoe.com"
+    company:
+      name: "Doe Industries"
+      catchPhrase: "Innovation at its finest"
+      bs: "cutting-edge solutions"
+
+asserts:
+  status: 201
+  body:
+    id: "${json-unit.matches:any-number}"
+    name: "John Doe"
+    username: "johndoe"
+    email: "john.doe@example.com"
+    address:
+      street: "123 Main St"
+      suite: "Apt 1"
+      city: "Anytown"
+      zipcode: "12345"
+      geo:
+        lat: "40.7128"
+        lng: "-74.0060"
+    phone: "555-123-4567"
+    website: "johndoe.com"
+    company:
+      name: "Doe Industries"
+      catchPhrase: "Innovation at its finest"
+      bs: "cutting-edge solutions"
+
+meta:
+  epic: HTTP Methods
+  feature: POST Requests
+  story: Create New User
+  severity: critical
+  tags:
+    - http-post
+    - user-creation
+    - request-body
+  description: Demonstrates POST request to create a new user with full request and response body validation

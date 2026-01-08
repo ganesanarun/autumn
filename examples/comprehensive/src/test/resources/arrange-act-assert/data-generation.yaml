@@ -1,0 +1,61 @@
+# Data Generation Example
+# Demonstrates using data generation functions in arrange-act-assert pattern
+
+arrange:
+  - name: Create user with generated data
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/users
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        name: "${generate:name}"
+        username: "${generate:username}"
+        email: "${generate:email}"
+        address:
+          street: "${generate:address}"
+          city: "${generate:city}"
+          zipcode: "${generate:zipcode}"
+        phone: "${generate:phone}"
+        website: "${generate:domain}"
+        company:
+          name: "${generate:company}"
+          catchPhrase: "${generate:sentence}"
+          bs: "${generate:words:3}"
+    saveResponseAs: generatedUser
+
+act:
+  url: https://jsonplaceholder.typicode.com/posts
+  method: POST
+  headers:
+    Content-Type:
+      - application/json
+  body:
+    title: "${generate:sentence:5}"
+    body: "${generate:paragraph}"
+    userId: "${generatedUser.id}"
+
+asserts:
+  status: 201
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body:
+    id: "${json-unit.matches:any-number}"
+    title: "${json-unit.matches:any-string}"
+    body: "${json-unit.matches:any-string}"
+    userId: "${generatedUser.id}"
+
+meta:
+  epic: Arrange-Act-Assert
+  feature: Data Generation
+  story: Dynamic Test Data Generation
+  severity: normal
+  tags:
+    - arrange-act-assert
+    - data-generation
+    - dynamic-data
+    - test-data
+  description: Demonstrates using data generation functions to create dynamic test data in arrange-act-assert pattern

@@ -1,0 +1,67 @@
+# Production Environment Example
+# Demonstrates production-specific configuration and constraints
+
+act:
+  url: ${api.base-url.production}/users/1
+  method: GET
+  headers:
+    Accept:
+      - application/json
+    User-Agent:
+      - Autumn-Framework-Production-Test
+    X-Environment:
+      - production
+    X-Test-User:
+      - ${test.data.user.default-email}
+    X-API-Version:
+      - "v1"
+    X-Client-ID:
+      - "autumn-framework-test"
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+    X-Frame-Options:
+      - "${json-unit.matches:any-string}"
+    X-Content-Type-Options:
+      - "${json-unit.matches:any-string}"
+  body:
+    id: 1
+    name: "Leanne Graham"
+    username: "Bret"
+    email: "Sincere@april.biz"
+    address:
+      street: "Kulas Light"
+      suite: "Apt. 556"
+      city: "Gwenborough"
+      zipcode: "92998-3874"
+      geo:
+        lat: "-37.3159"
+        lng: "81.1496"
+    phone: "1-770-736-8031 x56442"
+    website: "hildegard.org"
+    company:
+      name: "Romaguera-Crona"
+      catchPhrase: "Multi-layered client-server neural-net"
+      bs: "harness real-time e-markets"
+
+schedule:
+  # More restrictive scheduling for production
+  activeBetween: "02:00-04:00"
+  timezone: "UTC"
+  # Only run on specific days in production
+  activeDays: ["SUNDAY", "WEDNESDAY"]
+
+meta:
+  epic: Environment Configuration
+  feature: Production Environment
+  story: Production-Safe API Testing
+  severity: critical
+  tags:
+    - environment-production
+    - configuration
+    - security-headers
+    - restricted-schedule
+  description: Demonstrates production-specific configuration with security considerations and restricted scheduling

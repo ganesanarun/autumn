@@ -1,0 +1,32 @@
+# Authentication Example
+# Demonstrates various authentication methods
+
+act:
+  url: https://httpbin.org/bearer
+  method: GET
+  headers:
+    Accept:
+      - application/json
+    Authorization:
+      - Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json
+  body:
+    authenticated: true
+    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+
+meta:
+  epic: Advanced Features
+  feature: Authentication
+  story: Bearer Token Authentication
+  severity: critical
+  tags:
+    - authentication
+    - bearer-token
+    - jwt
+    - security
+  description: Demonstrates Bearer token authentication with JWT token validation

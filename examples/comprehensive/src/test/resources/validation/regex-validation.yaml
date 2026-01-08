@@ -1,0 +1,42 @@
+# Regex Validation Example
+# Demonstrates using regular expressions for response validation
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/1
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 200
+  body:
+    id: 1
+    name: "${json-unit.matches:regex}[A-Za-z\\s]+"  # Name should contain only letters and spaces
+    username: "${json-unit.matches:regex}[A-Za-z0-9_]+"  # Username should be alphanumeric with underscores
+    email: "${json-unit.matches:regex}[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"  # Valid email format
+    address:
+      street: "${json-unit.matches:regex}.+"  # Any non-empty string
+      suite: "${json-unit.matches:regex}(Apt\\.|Suite)\\s.+"  # Should start with "Apt." or "Suite"
+      city: "${json-unit.matches:regex}[A-Za-z\\s]+"  # City name with letters and spaces
+      zipcode: "${json-unit.matches:regex}\\d{5}(-\\d{4})?"  # US ZIP code format (5 digits or 5+4)
+      geo:
+        lat: "${json-unit.matches:regex}-?\\d+\\.\\d+"  # Decimal number (latitude)
+        lng: "${json-unit.matches:regex}-?\\d+\\.\\d+"  # Decimal number (longitude)
+    phone: "${json-unit.matches:regex}[\\d\\-\\s\\(\\)x\\+]+"  # Phone number with various formats
+    website: "${json-unit.matches:regex}[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"  # Domain name format
+    company:
+      name: "${json-unit.matches:regex}[A-Za-z\\s\\-]+"  # Company name
+      catchPhrase: "${json-unit.matches:regex}.+"  # Any non-empty string
+      bs: "${json-unit.matches:regex}[a-zA-Z\\s\\-]+"  # Business description
+
+meta:
+  epic: Validation
+  feature: Response Validation
+  story: Regular Expression Validation
+  severity: normal
+  tags:
+    - response-validation
+    - regex-validation
+    - pattern-matching
+  description: Demonstrates using regular expressions to validate response field formats including email, phone, ZIP code, and other structured data
