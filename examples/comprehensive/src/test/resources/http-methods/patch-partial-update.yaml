@@ -1,0 +1,50 @@
+# PATCH Request Example
+# Demonstrates partial update of an existing resource
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/1
+  method: PATCH
+  headers:
+    Content-Type:
+      - application/json
+    Accept:
+      - application/json
+  body:
+    name: "Partially Updated Name"
+    email: "partial.update@example.com"
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body:
+    id: 1
+    name: "Partially Updated Name"
+    username: "Bret"  # Original value should remain
+    email: "partial.update@example.com"
+    address:
+      street: "Kulas Light"  # Original values should remain
+      suite: "Apt. 556"
+      city: "Gwenborough"
+      zipcode: "92998-3874"
+      geo:
+        lat: "-37.3159"
+        lng: "81.1496"
+    phone: "1-770-736-8031 x56442"
+    website: "hildegard.org"
+    company:
+      name: "Romaguera-Crona"
+      catchPhrase: "Multi-layered client-server neural-net"
+      bs: "harness real-time e-markets"
+
+meta:
+  epic: HTTP Methods
+  feature: PATCH Requests
+  story: Partial Update User
+  severity: normal
+  tags:
+    - http-patch
+    - partial-update
+    - user-modification
+  description: Demonstrates PATCH request to partially update specific fields of an existing user

@@ -1,0 +1,47 @@
+# Simple Arrange-Act-Assert Example
+# Demonstrates the basic arrange-act-assert pattern with data setup
+
+arrange:
+  - name: Create a test post
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/posts
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        title: "Test Post for Comments"
+        body: "This is a test post created for comment testing"
+        userId: 1
+    saveResponseAs: testPost
+
+act:
+  url: https://jsonplaceholder.typicode.com/posts/${testPost.id}/comments
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body:
+    - postId: "${testPost.id}"
+      id: "${json-unit.matches:any-number}"
+      name: "${json-unit.matches:any-string}"
+      email: "${json-unit.matches:regex}.*@.*\\..*"
+      body: "${json-unit.matches:any-string}"
+
+meta:
+  epic: Arrange-Act-Assert
+  feature: Basic Pattern
+  story: Simple Data Setup and Retrieval
+  severity: normal
+  tags:
+    - arrange-act-assert
+    - data-setup
+    - response-reuse
+  description: Demonstrates basic arrange-act-assert pattern where data is created in arrange step and used in the main action

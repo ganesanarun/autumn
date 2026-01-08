@@ -1,0 +1,27 @@
+# Error Handling Example
+# Demonstrates testing error scenarios and error response validation
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/999999
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 404
+  headers:
+    Content-Type:
+      - application/json; charset=utf-8
+  body: {}
+
+meta:
+  epic: Advanced Features
+  feature: Error Handling
+  story: Not Found Error Handling
+  severity: normal
+  tags:
+    - error-handling
+    - 404-error
+    - negative-testing
+  description: Demonstrates testing error scenarios and validating error responses for non-existent resources

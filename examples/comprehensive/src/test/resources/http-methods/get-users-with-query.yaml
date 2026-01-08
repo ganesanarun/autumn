@@ -1,0 +1,39 @@
+# GET Request with Query Parameters Example
+# Demonstrates GET request with query parameters and flexible response validation
+
+act:
+  url: https://jsonplaceholder.typicode.com/users?_limit=3
+  method: GET
+
+asserts:
+  status: 200
+  body:
+    - id: "${json-unit.matches:any-number}"
+      name: "${json-unit.matches:any-string}"
+      username: "${json-unit.matches:any-string}"
+      email: "${json-unit.matches:regex}.*@.*\\..*"
+      address:
+        street: "${json-unit.matches:any-string}"
+        suite: "${json-unit.matches:any-string}"
+        city: "${json-unit.matches:any-string}"
+        zipcode: "${json-unit.matches:any-string}"
+        geo:
+          lat: "${json-unit.matches:any-string}"
+          lng: "${json-unit.matches:any-string}"
+      phone: "${json-unit.matches:any-string}"
+      website: "${json-unit.matches:any-string}"
+      company:
+        name: "${json-unit.matches:any-string}"
+        catchPhrase: "${json-unit.matches:any-string}"
+        bs: "${json-unit.matches:any-string}"
+
+meta:
+  epic: HTTP Methods
+  feature: GET Requests
+  story: Retrieve Multiple Users with Query Parameters
+  severity: normal
+  tags:
+    - http-get
+    - query-parameters
+    - array-validation
+  description: Demonstrates GET request with query parameters and flexible array response validation using json-unit matchers

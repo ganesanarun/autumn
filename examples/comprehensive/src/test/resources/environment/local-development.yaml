@@ -1,0 +1,53 @@
+# Local Development Environment Example
+# Demonstrates local development configuration for testing
+
+act:
+  url: ${api.base-url.local}/users/1
+  method: GET
+  headers:
+    Accept:
+      - application/json
+    User-Agent:
+      - Autumn-Framework-Local-Test
+    X-Environment:
+      - local
+    X-Debug:
+      - "true"
+    Authorization:
+      - "Bearer dev-token"
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json
+    Access-Control-Allow-Origin:
+      - "*"
+    Access-Control-Allow-Methods:
+      - "${json-unit.matches:any-string}"
+  body:
+    id: 1
+    name: "${json-unit.matches:any-string}"
+    username: "${json-unit.matches:any-string}"
+    email: "${json-unit.matches:regex}.*@.*\\..*"
+    # More flexible validation for local development
+    address: "${json-unit.matches:any-object}"
+    phone: "${json-unit.matches:any-string}"
+    website: "${json-unit.matches:any-string}"
+    company: "${json-unit.matches:any-object}"
+
+schedule:
+  # No scheduling restrictions for local development
+  alwaysActive: true
+
+meta:
+  epic: Environment Configuration
+  feature: Local Development
+  story: Local Development Testing
+  severity: minor
+  tags:
+    - environment-local
+    - development
+    - flexible-validation
+    - no-restrictions
+  description: Demonstrates local development configuration with flexible validation and no scheduling restrictions

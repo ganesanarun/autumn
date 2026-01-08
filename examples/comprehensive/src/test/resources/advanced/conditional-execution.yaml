@@ -1,0 +1,35 @@
+# Conditional Execution Example
+# Demonstrates conditional test execution based on environment or other conditions
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/1
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 200
+  body:
+    id: 1
+    name: "Leanne Graham"
+    username: "Bret"
+    email: "Sincere@april.biz"
+
+schedule:
+  # Only run during specific time windows
+  activeBetween: "09:00-17:00"
+  timezone: "America/New_York"
+  activeDays: ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+
+meta:
+  epic: Advanced Features
+  feature: Conditional Execution
+  story: Environment-Based Conditional Execution
+  severity: normal
+  tags:
+    - conditional-execution
+    - environment-based
+    - scheduling
+    - smart-execution
+  description: Demonstrates conditional test execution based on scheduling constraints

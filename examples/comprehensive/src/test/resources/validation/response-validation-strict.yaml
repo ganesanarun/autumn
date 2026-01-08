@@ -1,0 +1,33 @@
+# Strict Response Validation Example
+# Demonstrates strict response validation with exact matching
+
+act:
+  url: https://httpbin.org/json
+  method: GET
+
+asserts:
+  status: 200
+  body:
+    slideshow:
+      author: "Yours Truly"
+      date: "date of publication"
+      slides:
+        - title: "Wake up to WonderWidgets!"
+          type: "all"
+        - items:
+            - "Why <em>WonderWidgets</em> are great"
+            - "Who <em>buys</em> WonderWidgets"
+          title: "Overview"
+          type: "all"
+      title: "Sample Slide Show"
+
+meta:
+  epic: Validation
+  feature: Response Validation
+  story: Strict Response Validation
+  severity: critical
+  tags:
+    - response-validation
+    - strict-validation
+    - exact-matching
+  description: Demonstrates strict response validation with exact field matching and array order validation

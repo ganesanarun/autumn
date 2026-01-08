@@ -1,0 +1,36 @@
+# Timeout and Retry Example
+# Demonstrates timeout and retry configuration
+
+act:
+  url: https://httpbin.org/delay/2
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 200
+  headers:
+    Content-Type:
+      - application/json
+  body:
+    args: {}
+    headers:
+      Accept:
+        - application/json
+      Host:
+        - httpbin.org
+    origin: "${json-unit.matches:regex}\\d+\\.\\d+\\.\\d+\\.\\d+"
+    url: "https://httpbin.org/delay/2"
+
+meta:
+  epic: Advanced Features
+  feature: Timeout and Retry
+  story: Request Timeout and Retry Configuration
+  severity: normal
+  tags:
+    - timeout
+    - retry
+    - resilience
+    - configuration
+  description: Demonstrates testing with delayed responses to validate timeout handling

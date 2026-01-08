@@ -1,0 +1,101 @@
+# Complex Arrange-Act-Assert Example
+# Demonstrates complex arrange phase with multiple setup steps and data dependencies
+
+arrange:
+  - name: Create test user
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/users
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        name: "Test User for Complex Scenario"
+        username: "testuser_complex"
+        email: "testuser.complex@example.com"
+        address:
+          street: "123 Test St"
+          city: "Test City"
+          zipcode: "12345"
+        phone: "555-0123"
+        website: "testuser.com"
+        company:
+          name: "Test Company"
+          catchPhrase: "Testing is our business"
+          bs: "quality assurance solutions"
+    saveResponseAs: testUser
+
+  - name: Create first test post
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/posts
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        title: "First Test Post"
+        body: "This is the first test post for complex scenario"
+        userId: "${testUser.id}"
+    saveResponseAs: firstPost
+
+  - name: Create second test post
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/posts
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        title: "Second Test Post"
+        body: "This is the second test post for complex scenario"
+        userId: "${testUser.id}"
+    saveResponseAs: secondPost
+
+  - name: Add comment to first post
+    type: api
+    act:
+      url: https://jsonplaceholder.typicode.com/comments
+      method: POST
+      headers:
+        Content-Type:
+          - application/json
+      body:
+        postId: "${firstPost.id}"
+        name: "Test Comment"
+        email: "commenter@example.com"
+        body: "This is a test comment on the first post"
+    saveResponseAs: testComment
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/${testUser.id}/posts
+  method: GET
+  headers:
+    Accept:
+      - application/json
+
+asserts:
+  status: 200
+  body:
+    - id: "${firstPost.id}"
+      title: "First Test Post"
+      body: "This is the first test post for complex scenario"
+      userId: "${testUser.id}"
+    - id: "${secondPost.id}"
+      title: "Second Test Post"
+      body: "This is the second test post for complex scenario"
+      userId: "${testUser.id}"
+
+meta:
+  epic: Arrange-Act-Assert
+  feature: Complex Pattern
+  story: Multi-Step Data Setup with Dependencies
+  severity: normal
+  tags:
+    - arrange-act-assert
+    - complex-setup
+    - data-dependencies
+    - multi-step
+  description: Demonstrates complex arrange-act-assert pattern with multiple setup steps, data dependencies, and cross-referencing between arranged data

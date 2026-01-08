@@ -1,0 +1,11 @@
+# JitPack configuration
+jdk:
+  - openjdk21
+
+# Build command for JitPack
+install:
+  - ./gradlew publishToMavenLocal -Pjitpack
+
+# Environment variables for JitPack build
+env:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"

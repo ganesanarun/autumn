@@ -1,0 +1,25 @@
+# Flexible Response Validation Example
+# Demonstrates flexible response validation using json-unit matchers
+
+act:
+  url: https://jsonplaceholder.typicode.com/posts/1
+  method: GET
+
+asserts:
+  status: 200
+  body:
+    userId: 1
+    id: 1
+    title: "${json-unit.matches:any-string}"
+    body: "${json-unit.matches:any-string}"
+
+meta:
+  epic: Validation
+  feature: Response Validation
+  story: Flexible Response Validation
+  severity: normal
+  tags:
+    - response-validation
+    - json-unit-matchers
+    - flexible-validation
+  description: Demonstrates flexible response validation using json-unit matchers for dynamic content while maintaining strict validation for known values

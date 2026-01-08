@@ -1,0 +1,17 @@
+# Autumn Framework - Publishing Credentials Template
+# Copy this to gradle.properties and fill in your actual credentials
+# NEVER commit gradle.properties to git!
+
+# GitHub Packages credentials
+# Get a personal access token from GitHub with write:packages scope
+gpr.user=YOUR_GITHUB_USERNAME
+gpr.key=YOUR_GITHUB_TOKEN
+
+# Sonatype Central Portal credentials (new system - recommended)
+# Get these from https://central.sonatype.com after creating account
+centralPortalUsername=YOUR_CENTRAL_PORTAL_USERNAME
+centralPortalPassword=YOUR_CENTRAL_PORTAL_PASSWORD
+
+# Note: GPG signing is handled via environment variables
+# GPG_PRIVATE_KEY and GPG_PASSPHRASE are set by the publish.sh script
+

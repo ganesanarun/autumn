@@ -1,0 +1,21 @@
+# DELETE Request Example
+# Demonstrates deleting a resource
+
+act:
+  url: https://jsonplaceholder.typicode.com/users/1
+  method: DELETE
+
+asserts:
+  status: 200
+  body: {}
+
+meta:
+  epic: HTTP Methods
+  feature: DELETE Requests
+  story: Delete User
+  severity: critical
+  tags:
+    - http-delete
+    - user-deletion
+    - resource-cleanup
+  description: Demonstrates DELETE request to remove a user resource

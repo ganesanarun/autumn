@@ -6,3 +6,7 @@ pluginManagement {
 	}
 }
 rootProject.name = 'autumn'
+
+// Include example projects
+// include 'examples:simple'
+// include 'examples:comprehensive'

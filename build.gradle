@@ -1,53 +1,299 @@
-import groovy.json.JsonBuilder
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.3.0-SNAPSHOT'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.springframework.boot' version '3.2.5' apply false
     id 'io.spring.dependency-management' version '1.1.4'
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'io.qameta.allure' version '2.12.0'
     id "io.spring.javaformat" version "0.0.47"
 }
 
-group = 'org.andino'
-version = '0.0.1-SNAPSHOT'
+group = 'io.github.ganesanarun'
+version = '1.0.2'
 
 java {
     sourceCompatibility = '21'
+    withJavadocJar()
+    withSourcesJar()
+}
+
+// Configure Javadoc to be less strict
+tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    failOnError = false
 }
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom(SpringBootPlugin.BOM_COORDINATES)
+    }
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Core dependencies that users will need (exposed via api)
+    api 'org.springframework.boot:spring-boot-starter-web'
+    api 'org.springframework:spring-web'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0'
+    api 'net.javacrumbs.json-unit:json-unit-spring:3.2.7'
+    api 'org.hamcrest:hamcrest-core:2.2'
+    api 'io.qameta.allure:allure-junit5:2.24.0'
+    api 'io.qameta.allure:allure-java-commons:2.24.0'
+    api 'org.junit.jupiter:junit-jupiter-api'
+    api 'org.junit.jupiter:junit-jupiter-engine'
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.0'
+    // Internal dependencies
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'net.andreinc:mockneat:0.4.8'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+}
 
-    implementation 'net.andreinc:mockneat:0.4.8'
+signing {
+    // GPG signing is required for publishing to Maven Central, but NOT for local publishing
+    required { 
+        gradle.taskGraph.hasTask("publish") || 
+        gradle.taskGraph.hasTask("publishToCentralPortal") ||
+        gradle.taskGraph.hasTask("publishToGitHub") ||
+        gradle.taskGraph.hasTask("publishAll")
+    }
+    
+    // Only sign if we're not in a JitPack build and have signing credentials
+    def canSign = !project.hasProperty('jitpack') && 
+                  (project.hasProperty('signing.keyId') || 
+                   project.hasProperty('signing.gnupg.keyName') ||
+                   System.getenv('GPG_PRIVATE_KEY'))
+    
+    if (canSign) {
+        // Support for in-memory signing (CI/CD environments)
+        if (System.getenv('GPG_PRIVATE_KEY') && System.getenv('GPG_PASSPHRASE')) {
+            useInMemoryPgpKeys(System.getenv('GPG_PRIVATE_KEY'), System.getenv('GPG_PASSPHRASE'))
+        }
+        
+        // Sign all publications
+        sign publishing.publications
+    }
+}
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'net.javacrumbs.json-unit:json-unit-spring:3.2.7'
-    implementation 'org.hamcrest:hamcrest-core:2.2'
-    implementation 'io.qameta.allure:allure-junit5:2.24.0'
-    implementation 'io.qameta.allure:allure-java-commons:2.24.0'
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            
+            pom {
+                name = 'Autumn Testing Framework'
+                description = 'YAML-driven API testing framework with Spring Boot integration'
+                url = 'https://github.com/ganesanarun/autumn'
+                
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id = 'ganesanarun'
+                        name = 'Ganesan Arun'
+                        email = 'ganesan.arunachalam91@gmail.com'
+                    }
+                }
+                
+                scm {
+                    connection = 'scm:git:git://github.com/ganesanarun/autumn.git'
+                    developerConnection = 'scm:git:ssh://github.com/ganesanarun/autumn.git'
+                    url = 'https://github.com/ganesanarun/autumn'
+                }
+            }
+        }
+    }
+    
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/ganesanarun/autumn"
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+// Task to publish to Maven Local for testing
+tasks.register('publishLocal') {
+    dependsOn publishToMavenLocal
+    doLast {
+        println "Published to Maven Local: ~/.m2/repository/io/github/ganesanarun/autumn/${version}/"
+    }
+}
+
+// Central Portal publishing task
+tasks.register('publishToCentralPortal') {
+    group = 'publishing'
+    description = 'Creates and uploads a bundle to Sonatype Central Portal'
+    dependsOn 'publishToMavenLocal'
+    
+    doLast {
+        def centralUsername = project.findProperty("centralPortalUsername") ?: System.getenv("CENTRAL_PORTAL_USERNAME")
+        def centralPassword = project.findProperty("centralPortalPassword") ?: System.getenv("CENTRAL_PORTAL_PASSWORD")
+        
+        if (!centralUsername || !centralPassword) {
+            println "Central Portal credentials not found. Bundle will be created for manual upload."
+            println "To enable automatic upload, set centralPortalUsername and centralPortalPassword in gradle.properties"
+        }
+        
+        // Create bundle directory
+        def bundleDir = file("${buildDir}/central-portal-bundle")
+        bundleDir.mkdirs()
+        
+        // Copy artifacts from local Maven repository
+        def localRepo = file("${System.getProperty('user.home')}/.m2/repository")
+        def artifactPath = "io/github/ganesanarun/autumn/${version}"
+        def sourceDir = file("${localRepo}/${artifactPath}")
+        
+        if (!sourceDir.exists()) {
+            throw new GradleException("Artifacts not found in local repository. Run 'publishToMavenLocal' first.")
+        }
+        
+        // Copy all artifacts to bundle directory and generate checksums
+        def targetDir = file("${bundleDir}/${artifactPath}")
+        targetDir.mkdirs()
+        
+        sourceDir.listFiles().each { file ->
+            if (file.isFile() && !file.name.endsWith('.md5') && !file.name.endsWith('.sha1')) {
+                // Copy the file
+                def targetFile = new File(targetDir, file.name)
+                targetFile.bytes = file.bytes
+                
+                // Generate MD5 checksum
+                def md5 = java.security.MessageDigest.getInstance("MD5")
+                md5.update(file.bytes)
+                def md5Hash = md5.digest().collect { String.format("%02x", it) }.join()
+                new File(targetDir, "${file.name}.md5").text = md5Hash
+                
+                // Generate SHA1 checksum
+                def sha1 = java.security.MessageDigest.getInstance("SHA-1")
+                sha1.update(file.bytes)
+                def sha1Hash = sha1.digest().collect { String.format("%02x", it) }.join()
+                new File(targetDir, "${file.name}.sha1").text = sha1Hash
+                
+                println "Generated checksums for ${file.name}"
+            }
+        }
+        
+        // Create bundle zip
+        def bundleZip = file("${buildDir}/autumn-${version}-bundle.zip")
+        ant.zip(destfile: bundleZip) {
+            fileset(dir: bundleDir)
+        }
+        
+        println "Created bundle with checksums: ${bundleZip}"
+        println "Bundle size: ${bundleZip.length()} bytes"
+        println ""
+        println "To upload to Central Portal:"
+        println "1. Go to https://central.sonatype.com"
+        println "2. Sign in with your account"
+        println "3. Go to 'Upload Component'"
+        println "4. Upload the bundle file: ${bundleZip}"
+    }
+}
+
+// Version-based publishing logic
+def isSnapshot = version.toString().endsWith('-SNAPSHOT')
+def isRelease = !isSnapshot
+
+// GitHub Packages publishing task
+tasks.register('publishToGitHub') {
+    group = 'publishing'
+    description = 'Publishes to GitHub Packages'
+    dependsOn 'publishMavenPublicationToGitHubPackagesRepository'
+    
+    doLast {
+        println "Published version ${version} to GitHub Packages"
+    }
+}
+
+// Convenience task to publish to all repositories
+tasks.register('publishAll') {
+    group = 'publishing'
+    description = 'Publishes to GitHub Packages and creates Central Portal bundle'
+    dependsOn 'publishToGitHub', 'publishToCentralPortal'
+    
+    doLast {
+        println "Published ${version} to GitHub Packages and created Central Portal bundle"
+        println "Don't forget to upload the bundle to https://central.sonatype.com"
+    }
+}
+
+// Validation task to check publishing prerequisites
+tasks.register('validatePublishing') {
+    group = 'publishing'
+    description = 'Validates that all prerequisites for publishing are met'
+    
+    doLast {
+        def errors = []
+        
+        // Check version format
+        if (version == 'unspecified' || version.toString().isEmpty()) {
+            errors.add("Version is not specified")
+        }
+        
+        // Check GitHub credentials
+        if (!project.hasProperty('gpr.user') && !System.getenv('GITHUB_USERNAME')) {
+            errors.add("GitHub username not configured")
+        }
+        if (!project.hasProperty('gpr.key') && !System.getenv('GITHUB_TOKEN')) {
+            errors.add("GitHub token not configured")
+        }
+        
+        // Check signing configuration for releases
+        if (isRelease) {
+            def hasSigningConfig = project.hasProperty('signing.keyId') || 
+                                 project.hasProperty('signing.gnupg.keyName') ||
+                                 System.getenv('GPG_PRIVATE_KEY')
+            if (!hasSigningConfig) {
+                errors.add("GPG signing configuration missing for release")
+            }
+        }
+        
+        if (errors.isEmpty()) {
+            println "✓ All publishing prerequisites are met for ${isSnapshot ? 'snapshot' : 'release'} version ${version}"
+        } else {
+            throw new GradleException("Publishing validation failed:\n" + errors.collect { "  - ${it}" }.join('\n'))
+        }
+    }
+}
+
+// Make publishing tasks depend on validation
+tasks.named('publishToGitHub') {
+    dependsOn 'validatePublishing'
+}
+
+tasks.named('publishToCentralPortal') {
+    dependsOn 'validatePublishing'
+}
+
+// JitPack compatibility - ensure build works without external repositories
+if (project.hasProperty('jitpack')) {
+    // Disable signing for JitPack builds
+    signing.required = false
 }
 
 tasks.named('test') {
     useJUnitPlatform()
     systemProperties project.properties.subMap(["env"])
     ignoreFailures true
-    finalizedBy 'generateTestSummary'
 }
-
 
 testlogger {
     theme 'standard'
@@ -73,129 +319,5 @@ allure {
     version = '2.30.0'
     report {
         singleFile = true
-    }
-}
-
-tasks.register('customizeAllureHtml') {
-    dependsOn allureReport
-    doLast {
-        def indexHtml = file("$buildDir/reports/allure-report/allureReport/index.html")
-        if (indexHtml.exists()) {
-            def content = indexHtml.text
-
-            // Replace the title
-            content = content.replace("<title>Allure Report</title>", "<title>GIV Test Report</title>")
-
-            // Write modified content back
-
-            def scriptContent = '''
-            <script>
-                (function() {
-                    // Initial replacement function
-                    function replaceAllureWithGiv() {
-                        // Walk through all text nodes in the document
-                        const walker = document.createTreeWalker(
-                            document.body, 
-                            NodeFilter.SHOW_TEXT, 
-                            null, 
-                            false
-                        );
-                        
-                        let node;
-                        while (node = walker.nextNode()) {
-                            if (node.nodeValue && node.nodeValue.includes('Allure')) {
-                                node.nodeValue = node.nodeValue.replace(/Allure/g, 'GIV');
-                            }
-                        }
-                    }
-            
-                    // Setup mutation observer to detect DOM changes
-                    const observer = new MutationObserver(function(mutations) {
-                        replaceAllureWithGiv();
-                    });
-                    
-                    // Configuration for the observer
-                    const config = { 
-                        childList: true,     // observe direct children
-                        subtree: true,       // and lower descendants too
-                        characterData: true, // observe text changes
-                        attributes: true     // observe attribute changes
-                    };
-                    
-                    // Initial run on page load
-                    window.addEventListener('DOMContentLoaded', function() {
-                        replaceAllureWithGiv();
-                        
-                        // Start observing the document body for changes
-                        observer.observe(document.body, config);
-                        
-                        // Additional event listeners for SPA navigation
-                        // Many SPAs use popstate for navigation
-                        window.addEventListener('popstate', function() {
-                            setTimeout(replaceAllureWithGiv, 100);
-                        });
-                        
-                        // Add listeners for clicks that might trigger navigation
-                        document.body.addEventListener('click', function() {
-                            setTimeout(replaceAllureWithGiv, 100);
-                        });
-                        
-                        // Check periodically in case we miss some updates
-                        setInterval(replaceAllureWithGiv, 1000);
-                    });
-                })();
-            </script>
-            '''
-            content = content.replace("</head>", scriptContent + "\n</head>")
-            indexHtml.text = content
-        } else {
-            logger.warn("Could not find index.html at ${indexHtml.absolutePath}")
-        }
-    }
-}
-
-tasks.named('allureReport').configure {
-    finalizedBy customizeAllureHtml
-}
-
-tasks.create('generateTestSummary') {
-    doLast {
-        def testReportDir = file("$buildDir/test-results/test")
-        def totalTests = 0
-        def failedTests = 0
-        def skippedTests = 0
-
-        if (testReportDir.exists()) {
-            def testSuits = testReportDir.listFiles().findAll { it.name.endsWith('.xml') }
-
-            testSuits.each {
-                def suite = new XmlParser().parse(it)
-
-                def tests = suite.@tests as Integer ?: 0
-                def failures = suite.@failures as Integer ?: 0
-                def errors = suite.@errors as Integer ?: 0
-                def skipped = suite.@skipped as Integer ?: 0
-
-                totalTests += tests
-                skippedTests += skipped
-                failedTests += (failures + errors)
-            }
-
-            def passedTests = totalTests - failedTests - skippedTests
-            def testResult = (failedTests > 0) ? "failure" : (totalTests == 0) ? "unknown" : "success"
-
-            def summary = [
-                    total  : totalTests,
-                    passed : passedTests,
-                    failed : failedTests,
-                    skipped: skippedTests,
-                    result : testResult,
-            ]
-            def jsonBuilder = new JsonBuilder(summary)
-            file("${buildDir}/test-results/summary.json").text = jsonBuilder.toPrettyString()
-        } else {
-            logger.warn("Test report directory does not exist: ${testReportDir.absolutePath}")
-        }
-
     }
 }
