@@ -37,3 +37,12 @@ out/
 .vscode/
 
 .DS_Store
+
+# Publishing and credentials
+gradle.properties
+*.asc
+*-bundle.zip
+
+# Allure reports
+allure-results/
+allure-report/
